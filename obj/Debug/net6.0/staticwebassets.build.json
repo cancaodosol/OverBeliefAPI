@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "Hash": "rfx2Or5bBcxV1y/z3YurK3B9EvN1mwDaBkvELgw6UX4=",
+  "Source": "OverBeliefApi",
+  "BasePath": "_content/OverBeliefApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "OverBeliefApi\\wwwroot",
+      "Source": "OverBeliefApi",
+      "ContentRoot": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\",
+      "BasePath": "_content/OverBeliefApi",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\css\\site.css",
+      "SourceId": "OverBeliefApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\",
+      "BasePath": "_content/OverBeliefApi",
+      "RelativePath": "css/site.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\index.html",
+      "SourceId": "OverBeliefApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\",
+      "BasePath": "_content/OverBeliefApi",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    },
+    {
+      "Identity": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\js\\site.js",
+      "SourceId": "OverBeliefApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\",
+      "BasePath": "_content/OverBeliefApi",
+      "RelativePath": "js/site.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\site.js"
+    }
+  ]
+}
