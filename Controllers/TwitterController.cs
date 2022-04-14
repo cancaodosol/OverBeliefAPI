@@ -35,10 +35,10 @@ namespace OverBeliefApi.Controllers
         // GET: api/twitter/user_search
         [EnableCors("All")]
         [HttpGet("tweet_best/{userName}")]
-        public async Task<ActionResult<IEnumerable<CoreTweet.Status>>> GetTweetsByUserName(string userName)
+        public async Task<ActionResult<IEnumerable<TwitterTweetApiDto>>> GetTweetsByUserName(string userName)
         {
             var tweets = _twitterApplication.GetMostFavoritedTweets(userName, 50);
-            return Ok(tweets);
+            return Ok(tweets.Select(x => new TwitterTweetApiDto(x)).ToArray());
         }
     }
 }
