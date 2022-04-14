@@ -17,7 +17,7 @@
             this.FriendsCount = user.FriendsCount;
             this.FollowersCount = user.FollowersCount;
             this.ProfileBannerUrl = user.ProfileBannerUrl;
-            this.ProfileImageUrl = user.ProfileImageUrl;
+            this.ProfileImageUrl = user.ProfileImageUrlHttps;
             this.Description = user.Description;
         }
     }
