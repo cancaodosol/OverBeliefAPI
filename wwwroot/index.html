@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
+    <!--
     <h1>To-do CRUD</h1>
     <h3>Add</h3>
     <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
@@ -35,10 +36,48 @@
         </tr>
         <tbody id="todos"></tbody>
     </table>
+    -->
+
+    <h1>Twitter Research Tool</h1>
+    <h3>Profile Banner Search</h3>
+    <form action="javascript:void(0);" method="POST" onsubmit="getTwitterUsersBySearchKeyWord()">
+        <input type="text" id="twitter-search-keyword" placeholder="ex ) Webマーケティング">
+        <input type="submit" value="キーワード検索">
+    </form>
+    <h3>Best Tweets</h3>
+    <form action="javascript:void(0);" method="POST" onsubmit="getTweetByUserName()">
+        <input type="text" id="twitter-user-name" placeholder="ex ) OH1de">
+        <input type="submit" value="ユーザー名検索">
+    </form>
+    <br/>
+    <button class="btn-get-tweet">@mintia_tweet</button>
+    <button class="btn-get-tweet">@annin_book</button>
+    <button class="btn-get-tweet">@yuki_99_s</button>
+    <button class="btn-get-tweet">@ottosan884</button>
+    <button class="btn-get-tweet">@wakki131313</button>
+    <button class="btn-get-tweet">@ziraiya01</button>
+    <button class="btn-get-tweet">@akki_contents</button>
+    <br/>
+    <br/>
+    <button onclick="getRecentlyTweets(15)">最近の15件</button>
+    <button onclick="getRecentlyTweets(30)">最近の30件</button>
+    <button onclick="getRecentlyTweets(50)">最近の50件</button>
+    <button onclick="getRecentlyTweets()">全件表示</button>
+    <h3> ↓ Results</h3>
+    <div id="twitter-search-results"></div>
 
     <script src="js/site.js" asp-append-version="true"></script>
+    <script src="js/twitter.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        getItems();
+        let btnGetTweets = document.querySelectorAll(".btn-get-tweet");
+        btnGetTweets.forEach(function(target) {
+            target.addEventListener('click', function() {
+                const inputTwitterUserName = document.getElementById("twitter-user-name");
+                const userName = target.innerHTML;
+                inputTwitterUserName.value = userName.replace('@', '');
+                getTweetByUserName();
+            });
+        });
     </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "rfx2Or5bBcxV1y/z3YurK3B9EvN1mwDaBkvELgw6UX4=",
+  "Hash": "k73X/TYBOa//BaL1o/H1p3XyU91eQyLYQxD3W3ETtD4=",
   "Source": "OverBeliefApi",
   "BasePath": "_content/OverBeliefApi",
   "Mode": "Default",
@@ -66,6 +66,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\site.js"
+    },
+    {
+      "Identity": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\js\\twitter.js",
+      "SourceId": "OverBeliefApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Hideyuki MATSUI\\source\\repos\\OverBeliefApi\\wwwroot\\",
+      "BasePath": "_content/OverBeliefApi",
+      "RelativePath": "js/twitter.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\twitter.js"
     }
   ]
 }
