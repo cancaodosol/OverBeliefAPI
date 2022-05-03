@@ -14,13 +14,23 @@ namespace OverBeliefApi.Models.Twitter
         private readonly string APISecret = "xxxxxxxxxxxxxxxxxxxxxx";
         private readonly string APIToken = "xxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxx";
         private readonly string APITokenSecret = "xxxxxxxxxxxxxxxxxxxxxx";
-        private readonly string TokensUserScreenName = "manabi_matsui";
 
         private Tokens Tokens;
         private OAuth.OAuthSession Session;
+        /// <summary>
+        /// Twitterサービスクラスのコンストラクタ
+        /// </summary>
         public TwitterService()
         {
+            this.Session = OAuth.Authorize(APIKey, APISecret);
             this.Tokens = CoreTweet.Tokens.Create(APIKey, APISecret, APIToken, APITokenSecret);
+            this.Tokens.Statuses.HomeTimeline(tweet_mode => "extended");
+        }
+
+        public TwitterService(string pincode)
+        {
+            this.Session = OAuth.Authorize(APIKey, APISecret);
+            this.Tokens = OAuth.GetTokens(this.Session, pincode);
             this.Tokens.Statuses.HomeTimeline(tweet_mode => "extended");
         }
 
@@ -30,7 +40,6 @@ namespace OverBeliefApi.Models.Twitter
         /// <returns></returns>
         public string GetUserAuthorizeUri()
         {
-            this.Session = OAuth.Authorize(APIKey, APISecret);
             return this.Session.AuthorizeUri.AbsoluteUri;
         }
 
@@ -161,7 +170,7 @@ namespace OverBeliefApi.Models.Twitter
         /// テキスト検索の結果ツイートを取得する。
         /// </summary>
         /// <param name="searchText">検索キーワード</param>
-        /// <param name="count">各メンバーから取得するツイート数</param>
+        /// <param name="count">検索結果の最大ツイート数</param>
         /// <returns>結果ツイート</returns>
         public List<Status> GetSearchTweets(string searchText, int count)
         {

@@ -1,4 +1,5 @@
-﻿const twitterApiUri = 'https://localhost:7233/api/twitter';
+﻿//const twitterApiUri = 'https://localhost:7233/api/twitter';
+const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
 const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
@@ -36,7 +37,7 @@ function _createTwitterUserElement(user)
     row.style.width = "600px";
     row.style.marginBottom = "20px";
 
-    let topbar = document.createElement('div');
+    let topbar = document.createElement('h4');
     topbar.innerHTML = user.name;
     row.appendChild(topbar);
 
@@ -62,10 +63,12 @@ function _createTwitterUserElement(user)
         screenName.innerHTML = '@' + user.screenName;
         profileName.appendChild(screenName);
     }
+    profileName.style.marginBottom = "5px";
     row.appendChild(profileName);
 
     let profileText = document.createElement('div');
     profileText.innerHTML = user.description + '<br/>';
+    profileText.style.marginBottom = "5px";
     row.appendChild(profileText);
 
     let followerInfo = document.createElement('div');
@@ -96,7 +99,7 @@ function _displayTweets(data) {
 
         let tweetInfo = document.createElement('div');
         {
-            tweetInfo.innerHTML = '💬 ' + 'no-data' + ' ㌟ ' + tweet.retweetCount + ' ♡ ' + tweet.favoriteCount + ' (' + tweet.createdAt + ')';
+            tweetInfo.innerHTML = '💬 ' + 'no-data' + ' ㌟ ' + tweet.retweetCount + ' ♡ ' + tweet.favoriteCount + ' (' + tweet.createdAt + ') ' + tweet.source;
             /*
             let linkToOriginalTweet = document.createElement('a');
             linkToOriginalTweet.href = tweet.entities.urls[0].url;

@@ -28,7 +28,7 @@ namespace OverBeliefApi.Controllers
         [HttpGet("user_search/{searchKeyWord}")]
         public async Task<ActionResult<IEnumerable<TwitterUserApiDto>>> GetTwitterUsersBySearchKeyWord(string searchKeyWord)
         {
-            var users = _twitterApplication.GetProfileBannersBySearchKeyWord(searchKeyWord, 10);
+            var users = _twitterApplication.GetProfileBannersBySearchKeyWord(searchKeyWord, 50);
             return Ok(users.Select(x => new TwitterUserApiDto(x)).ToArray());
         }
 
