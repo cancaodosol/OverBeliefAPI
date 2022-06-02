@@ -1,8 +1,15 @@
-﻿//const twitterApiUri = 'https://localhost:7233/api/twitter';
-const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
+﻿const twitterApiUri = 'https://localhost:7233/api/twitter';
+//const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
 const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
+const loginUser = {
+    id : "",
+    name : "",
+    twitterPincode : "",
+    twitterResearchUsers : [],
+    twitterAuthorizeUri : ""
+}
 
 function getTwitterUsersBySearchKeyWord() {
     const searchKeyWord = document.getElementById('twitter-search-keyword').value;
@@ -12,13 +19,66 @@ function getTwitterUsersBySearchKeyWord() {
         .catch(error => console.error('Unable to get items.', error));
 }
 
-function getTweetByUserName() {
-    const userName = document.getElementById('twitter-user-name').value;
+function getTweetByUserName(userName) {
     fetch(`${twitterApiUri}/tweet_best/${userName}`)
         .then(response => response.json())
         .then(data => _displayTweets(data))
         .catch(error => console.error('Unable to get items.', error));
 }
+
+function getUserAuthorizeUri() {
+    fetch(`${twitterApiUri}/user_authorize_uri`)
+        .then(response => response.json())
+        .then(data => loginUser.twitterAuthorizeUri = data.uri)
+        .catch(error => console.error('Unable to get items.', error));
+}
+
+function loginAuthorizeTwitter() {
+    fetch(`${twitterApiUri}/login`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {if(data.url) window.open(data.url, '_blank');})
+        .catch(error => console.error('Unable to get items.', error));
+}
+
+function updateUserPincode(pincode) {
+    const loginUserDto = {
+        id: loginUser.id,
+        twitterApiPincode: pincode
+    };
+
+    fetch(`${twitterApiUri}/user_authorize`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginUserDto)
+    })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data);
+        })
+        .catch(error => console.error('Unable to add item.', error));
+}
+
+function openUserAuthorizePage() {
+    const uri = getUserAuthorizeUri();
+    if(!loginUser.twitterAuthorizeUri) return;
+    window.open(loginUser.twitterAuthorizeUri, '_blank');
+}
+
+function authorizeTwitterUser() {
+    loginUser.id = 123456;
+    const pincode = document.getElementById('twitter-pincode').value;
+    updateUserPincode(pincode);
+}
+
 
 function _displayTwitterUsers(data) {
     const resultBox = document.getElementById('twitter-search-results');
@@ -84,6 +144,13 @@ function _displayTweets(data) {
 
     resultBox.appendChild(_createTwitterUserElement(data[0].user));
 
+    let tweetResultDaysEle = document.createElement('div');
+    tweetResultDaysEle.id = "calendar_basic";
+    tweetResultDaysEle.style.width = "1000px";
+    tweetResultDaysEle.style.height = "350px";
+    resultBox.appendChild(tweetResultDaysEle);
+    drawChart(transformChartData(data), tweetResultDaysEle);
+
     data.forEach(tweet => {
         let row = document.createElement('div');
         row.style.width = "600px";
@@ -128,4 +195,56 @@ function getRecentlyTweets(tweetCount) {
     });
     _displayTweets(recentlyTweets);
     twitterTweets = tmpTwitterTweets;
+}
+
+google.charts.load("current", {packages:["calendar"]});
+google.charts.setOnLoadCallback(drawChart);
+
+function transformChartData(tweets){
+    const countTweets = new Map();
+    countTweets.has = (key) => {
+        return typeof countTweets.get(key) !== "undefined";
+    };
+    tweets.forEach((tweet) => {
+        const createdAt = tweet.createdAt.substring(0, 10);
+        if(!countTweets.has(createdAt))
+        {
+            countTweets.set(createdAt, 1);
+            return;
+        }
+        countTweets.set(createdAt, countTweets.get(createdAt) - 0 + 1);
+    });
+
+    const result = [];
+    countTweets.forEach((value, key) => {
+        let chartData = [];
+        chartData.push(new Date(key));
+        chartData.push(value);
+        result.push(chartData);
+    });
+    return result;
+}
+
+function drawChart(data, chartTargetEle) {
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn({ type: 'date', id: 'Date' });
+    dataTable.addColumn({ type: 'number', id: 'Count' });
+    dataTable.addRows(data);
+
+    var chart = new google.visualization.Calendar(chartTargetEle);
+
+    var options = {
+      title: "Tweet Count",
+      height: 350,
+      noDataPattern: {
+        backgroundColor: '#f0f0f0',
+        color: '#fff'
+      },
+     colorAxis: {
+       minValue: 0,
+       colors: ['#FFFFFF', '#14c4a5']
+     }
+    };
+
+    chart.draw(dataTable, options);
 }

@@ -167,20 +167,16 @@ namespace OverBeliefApi.Models.Twitter
         }
 
         /// <summary>
-        /// 新規ユーザーの利用承認確認用のWebページを開きます。
+        /// TwitterAPIの利用承認確認用のWebページのURLを返します。
         /// </summary>
-        public void OpenAuthorizeUserPage()
+        public string GetUserAuthorizeUri()
         {
-            var authorizeUri = _twitterService.GetUserAuthorizeUri();
-            var pi = new ProcessStartInfo()
-            {
-                FileName = authorizeUri,
-                UseShellExecute = true
-            };
-            System.Diagnostics.Process.Start(pi);
+            return _twitterService.GetUserAuthorizeUri();
         }
-        public void SetTokensByPincode(string pincode)
+
+        public void SetTokensByPincode(string? pincode)
         {
+            if (pincode == null) return;
             _twitterService.SetTokensByPincode(pincode);
         }
 

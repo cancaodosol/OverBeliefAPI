@@ -1,4 +1,5 @@
 ﻿using CoreTweet;
+using OverBeliefApi.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +11,25 @@ namespace OverBeliefApi.Models.Twitter
 {
     public class TwitterService
     {
-        private readonly string APIKey = "xxxxxxxxxxxxxxxxxxxxxx";
-        private readonly string APISecret = "xxxxxxxxxxxxxxxxxxxxxx";
-        private readonly string APIToken = "xxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxx";
-        private readonly string APITokenSecret = "xxxxxxxxxxxxxxxxxxxxxx";
+        // private readonly string APIKey = "03cMf7MH6SuRuYSbpfHkZ29x8";
+        // private readonly string APISecret = "rQqylWxgIV5oRYrry5nQrQrPyE5hymU9gWlHlgjCqj7nqUstVM";
+        // private readonly string APIToken = "1265324744468951040-rdoy1GK16JvQar2GMt0xjuvNgNfvod";
+        // private readonly string APITokenSecret = "cNL77Tpb7GXkeYWAkLgyEtRlxU7cT5ZY2laTQ59VBek2C";
+        private readonly string APIKey = "jXxiikEh8LjaqJmNE68EK1r5q";
+        private readonly string APISecret = "1BVFvnU7505bgqfbZgcBjq2Cbw3bK26uz7JZ8cU6dIG5KYqOed";
+        private readonly string APIToken = "1434089206909833220-UQpBfjumOCOtEybm3rKRsp0upvoIxR";
+        private readonly string APITokenSecret = "ecbWnUWtLw532PdjRx6Tgu2Gd9f55kpN896TINPuTTfUa";
 
         private Tokens Tokens;
         private OAuth.OAuthSession Session;
+        private Config config = Config.Instance;
         /// <summary>
         /// Twitterサービスクラスのコンストラクタ
         /// </summary>
         public TwitterService()
         {
-            this.Session = OAuth.Authorize(APIKey, APISecret);
-            this.Tokens = CoreTweet.Tokens.Create(APIKey, APISecret, APIToken, APITokenSecret);
+            this.Session = OAuth.Authorize(config.token.ConsumerKey, config.token.ConsumerSecret);
+            this.Tokens = CoreTweet.Tokens.Create(config.token.ConsumerKey, config.token.ConsumerSecret, APIToken, APITokenSecret);
             this.Tokens.Statuses.HomeTimeline(tweet_mode => "extended");
         }
 
@@ -47,6 +53,7 @@ namespace OverBeliefApi.Models.Twitter
         /// Twitterアカウントのアプリへのアクセス許可認証で作成されたPINコードを基に、新しいトークンをセットします。
         /// </summary>
         /// <param name="pincode"></param>
+        /// <remarks>この時のSessionは、this.Session.AuthorizeUri.AbsoluteUriをした時と同様のものである必要がある。</remarks>
         public void SetTokensByPincode(string pincode)
         {
             this.Tokens = OAuth.GetTokens(this.Session, pincode);
