@@ -26,13 +26,6 @@ function getTweetByUserName(userName) {
         .catch(error => console.error('Unable to get items.', error));
 }
 
-function getUserAuthorizeUri() {
-    fetch(`${twitterApiUri}/user_authorize_uri`)
-        .then(response => response.json())
-        .then(data => loginUser.twitterAuthorizeUri = data.uri)
-        .catch(error => console.error('Unable to get items.', error));
-}
-
 function loginAuthorizeTwitter() {
     fetch(`${twitterApiUri}/login`, {
         method: 'POST',
@@ -42,7 +35,7 @@ function loginAuthorizeTwitter() {
         }
     })
         .then(response => response.json())
-        .then(data => {if(data.url) window.open(data.url, '_blank');})
+        .then(data => {if(data.url) window.location.assign(data.url);})
         .catch(error => console.error('Unable to get items.', error));
 }
 
@@ -66,19 +59,6 @@ function updateUserPincode(pincode) {
         })
         .catch(error => console.error('Unable to add item.', error));
 }
-
-function openUserAuthorizePage() {
-    const uri = getUserAuthorizeUri();
-    if(!loginUser.twitterAuthorizeUri) return;
-    window.open(loginUser.twitterAuthorizeUri, '_blank');
-}
-
-function authorizeTwitterUser() {
-    loginUser.id = 123456;
-    const pincode = document.getElementById('twitter-pincode').value;
-    updateUserPincode(pincode);
-}
-
 
 function _displayTwitterUsers(data) {
     const resultBox = document.getElementById('twitter-search-results');

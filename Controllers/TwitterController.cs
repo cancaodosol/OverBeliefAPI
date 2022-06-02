@@ -86,26 +86,6 @@ namespace OverBeliefApi.Controllers
             return StatusCode(StatusCodes.Status303SeeOther);
         }
 
-
-        // GET: api/twitter/user_authorize_uri
-        [EnableCors("All")]
-        [HttpGet("user_authorize_uri")]
-        public async Task<IActionResult> GetUserAuthorizeUri()
-        {
-            var uri = await Task.Run(() => _twitterApplication.GetUserAuthorizeUri());
-            return Ok(new { uri = uri });
-        }
-
-        // POST: api/twitter/user_authorize
-        [EnableCors("All")]
-        [HttpPost("user_authorize")]
-        public async Task<ActionResult<LoginUserApiDto>> PostUserAuthorize(LoginUserApiDto loginUser)
-        {
-            Console.WriteLine("PostUserAuthorize loginUser.TwitterApiPincode : {0}", loginUser.TwitterApiPincode);
-            await Task.Run(() => _twitterApplication.SetTokensByPincode(loginUser.TwitterApiPincode));
-            return CreatedAtAction(nameof(PostUserAuthorize), new { id = loginUser.Id }, loginUser);
-        }
-
         // GET: api/twitter/user_search/{searchKeyWord}
         [EnableCors("All")]
         [HttpGet("user_search/{searchKeyWord}")]
