@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using OverBeliefApi.Models;
-using OverBeliefApi.Models.LoginUser;
-using System.Configuration;
+using OverBeliefApi.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +23,12 @@ builder.Services.AddEndpointsApiExplorer();
 // ************************
 // ログインユーザー
 builder.Services.AddDbContext<LoginUserContext>((opt) =>
+    opt.UseSqlite("Data Source=Database/overbelief.db"));
+// ツイート
+builder.Services.AddDbContext<TwitterTweetContext>((opt) =>
+    opt.UseSqlite("Data Source=Database/overbelief.db"));
+// Twitterユーザー
+builder.Services.AddDbContext<TwitterUserContext>((opt) =>
     opt.UseSqlite("Data Source=Database/overbelief.db"));
 
 builder.Services.AddDistributedMemoryCache();

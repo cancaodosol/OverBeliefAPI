@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OverBeliefApi.Models.LoginUser;
 
-namespace OverBeliefApi.Models.LoginUser
+namespace OverBeliefApi.Contexts
 {
     public class LoginUserContext : DbContext
     {

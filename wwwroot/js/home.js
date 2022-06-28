@@ -10,22 +10,8 @@ const myFavoriteTwitterUserIds = [
 ];
 
 window.onload = () => {
-    
-    $("#btn-get-tweet-by-user-name").on('click', () => {
-        const userName = $("#twitter-user-name").val();
-        getTweetByUserName(userName);
 
-        if(myFavoriteTwitterUserIds.find(x => x.id === userName) === undefined)
-        {
-            myFavoriteTwitterUserIds.push({id: userName});
-            $('<button>', {
-                class: 'btn-get-tweets',
-                'data-id': userName,
-                text: "@" + userName
-            }).appendTo("#btns-get-tweets");
-        }
-    });
-
+    // 画面表示
     $('<div>', {
         id: 'btns-get-tweets'
     }).appendTo("#my-favorite-tweets-box");
@@ -66,4 +52,27 @@ window.onload = () => {
             text: "全件表示"
         }).appendTo("#btns-get-recently-tweets");
     }
+
+    // 画面イベント
+    $("#btn-get-tweet-by-user-name").on('click', () => {
+        const userName = $("#twitter-user-name").val();
+        getTweetByUserName(userName);
+
+        if(myFavoriteTwitterUserIds.find(x => x.id === userName) === undefined)
+        {
+            myFavoriteTwitterUserIds.push({id: userName});
+            $('<button>', {
+                class: 'btn-get-tweets',
+                'data-id': userName,
+                text: "@" + userName
+            }).appendTo("#btns-get-tweets");
+        }
+    });
+
+    $("#btn-get-my-favorite-users").on('click', () => {
+        getMyFavoriteTwitterUsers();
+    });
+    $("#btn-add-my-favorite-users").on('click', () => {
+        addMyFavoriteTwitterUsers();
+    });
 }

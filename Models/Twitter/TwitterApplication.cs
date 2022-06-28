@@ -77,7 +77,7 @@ namespace OverBeliefApi.Models.Twitter
             */
             // this.DisplayTweets(_twitterService.GetTweetsOfTargetUser("memoer15", 5));
             var states = _twitterService.GetSearchTweets(searchKeyWord, searchResultMax);
-            this.DisplayTweets(states);
+            // this.DisplayTweets(states);
             var users = states.Select(x => x.User).ToList();
             // this.SaveUserProfileBanner(users, searchKeyWord);
             return users;
@@ -107,7 +107,7 @@ namespace OverBeliefApi.Models.Twitter
                 foreach (var (user, index) in users.Select((user, index) => (user, index)))
                 {
                     var imageTopHeight = resultImageHeight * index;
-                    Console.WriteLine("User : {0} [{1}/{2}], ProfileBannerUrl : {3}", user.Name, user.FriendsCount, user.FollowersCount, user.ProfileBannerUrl);
+                    // Console.WriteLine("User : {0} [{1}/{2}], ProfileBannerUrl : {3}", user.Name, user.FriendsCount, user.FollowersCount, user.ProfileBannerUrl);
                     var bannerImage = LoadImageFromUrl(user.ProfileBannerUrl, profileBannerImageWidth, profileBannerImageHeight);
                     var profileImage = LoadImageFromUrl(user.ProfileImageUrl, profileIconImageWidth, profileBannerIconHeight);
                     if (bannerImage != null && profileImage != null)

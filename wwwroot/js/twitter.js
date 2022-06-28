@@ -11,6 +11,27 @@ const loginUser = {
     twitterAuthorizeUri : ""
 }
 
+function getMyFavoriteTwitterUsers() {
+    fetch(`${twitterApiUri}/users`)
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Unable to get items.', error));
+}
+
+function addMyFavoriteTwitterUsers() {
+    fetch(`${twitterApiUri}/users`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(twitterUsers[0])
+    })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Unable to get items.', error));
+}
+
 function getTwitterUsersBySearchKeyWord() {
     const searchKeyWord = document.getElementById('twitter-search-keyword').value;
     fetch(`${twitterApiUri}/user_search/${searchKeyWord}`)
