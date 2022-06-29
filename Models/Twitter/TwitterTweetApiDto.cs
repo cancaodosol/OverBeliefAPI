@@ -18,7 +18,7 @@
             this.FullText = status.FullText;
             this.RetweetCount = status.RetweetCount;
             this.FavoriteCount = status.FavoriteCount;
-            this.CreatedAt = status.CreatedAt.ToString();
+            this.CreatedAt = status.CreatedAt.ToString("yyyy/MM/dd HH:mm");
             this.Source = status.Source;
             this.User = new TwitterUserApiDto(status.User);
         }
