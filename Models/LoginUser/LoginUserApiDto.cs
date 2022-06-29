@@ -7,6 +7,7 @@
         public string? LastName { get; set; }
         public string? ScreenName { get; set; }
         public string? TwitterApiPincode { get; set; }
+        public string? EmailAddress { get; set; }
         public string? TwitterName { get; set; }
     }
 }

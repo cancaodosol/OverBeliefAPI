@@ -4,7 +4,7 @@ const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
 const loginUser = {
-    id : "",
+    id : 44117452,
     name : "",
     twitterPincode : "",
     twitterResearchUsers : [],
@@ -14,22 +14,27 @@ const loginUser = {
 function getMyFavoriteTwitterUsers() {
     fetch(`${twitterApiUri}/users`)
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => data.forEach(user => addMyFavoriteUserIds(user.screenName)))
         .catch(error => console.error('Unable to get items.', error));
 }
 
-function addMyFavoriteTwitterUsers() {
+function addMyFavoriteTwitterUsers(twitterUserEntity) {
     fetch(`${twitterApiUri}/users`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(twitterUsers[0])
+        body: JSON.stringify(twitterUserEntity)
     })
         .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Unable to get items.', error));
+        .then(data => {
+            if(!data.id){window.alert(`${twitterUserEntity.name}の登録が失敗しました。`); return;}
+            window.alert(`${data.name}の登録が完了しました。`);
+            addMyFavoriteUserIds(data.screenName);
+            refreshMyFavoriteTweetsBox();
+        })
+        .catch(error => console.error('Unable to add twitterUserEntity.', error));
 }
 
 function getTwitterUsersBySearchKeyWord() {
@@ -135,6 +140,29 @@ function _createTwitterUserElement(user)
     let followerInfo = document.createElement('div');
     followerInfo.innerHTML = user.friendsCount + 'フォロー中 ' + user.followersCount + 'フォロワー<br/>';
     row.appendChild(followerInfo);
+    
+    let btnbar = document.createElement('div');
+    {
+        let btnAddFavorite = document.createElement('button');
+        btnAddFavorite.textContent = "お気に入り登録"
+        btnAddFavorite.onclick = () => {
+            const userEntity = {
+                "ownedUserId": loginUser.id,
+                "div": "F",
+                "tag": "",
+                "name": user.name,
+                "screenName": user.screenName,
+                "friendsCount": user.friendsCount,
+                "followersCount": user.followersCount,
+                "profileBannerUrl": user.profileBannerUrl,
+                "profileImageUrl": user.profileImageUrl,
+                "description": user.description
+            }
+            addMyFavoriteTwitterUsers(userEntity);
+        };
+        btnbar.appendChild(btnAddFavorite);
+    }
+    row.appendChild(btnbar);
 
     return row;
 }

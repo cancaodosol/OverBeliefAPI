@@ -16,19 +16,8 @@ window.onload = () => {
         id: 'btns-get-tweets'
     }).appendTo("#my-favorite-tweets-box");
     {
-        myFavoriteTwitterUserIds.forEach((x) => {
-            $('<button>', {
-                class: 'btn-get-tweets',
-                'data-id': x.id,
-                text: "@" + x.id
-            }).appendTo("#btns-get-tweets");
-        });
-
-        $(".btn-get-tweets").on('click', (e) => {
-            const userName = e.target.innerText;
-            $("#twitter-user-name").val(userName);
-            getTweetByUserName(userName);
-        });
+        getMyFavoriteTwitterUsers();
+        refreshMyFavoriteTweetsBox();
     }
 
     $('<div>', {
@@ -68,11 +57,28 @@ window.onload = () => {
             }).appendTo("#btns-get-tweets");
         }
     });
+}
+function addMyFavoriteUserIds(screenName) {
+    if(typeof(screenName) !== "string") return;
+    if(myFavoriteTwitterUserIds.find(x => x.id === screenName)) return;
+    myFavoriteTwitterUserIds.push({id : screenName});
+}
 
-    $("#btn-get-my-favorite-users").on('click', () => {
-        getMyFavoriteTwitterUsers();
+function refreshMyFavoriteTweetsBox() {
+    const btnsGetTweets = document.getElementById('btns-get-tweets');
+    btnsGetTweets.innerHTML = '';
+
+    myFavoriteTwitterUserIds.forEach((x) => {
+        $('<button>', {
+            class: 'btn-get-tweets',
+            'data-id': x.id,
+            text: "@" + x.id
+        }).appendTo("#btns-get-tweets");
     });
-    $("#btn-add-my-favorite-users").on('click', () => {
-        addMyFavoriteTwitterUsers();
+
+    $(".btn-get-tweets").on('click', (e) => {
+        const userName = e.target.innerText;
+        $("#twitter-user-name").val(userName);
+        getTweetByUserName(userName);
     });
 }
