@@ -37,6 +37,30 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
         .catch(error => console.error('Unable to add twitterUserEntity.', error));
 }
 
+function getMyFavoriteTwitterTweet() {
+    fetch(`${twitterApiUri}/tweets`)
+        .then(response => response.json())
+        .then(data => _displayTweets(data, false))
+        .catch(error => console.error('Unable to get items.', error));
+}
+
+function addMyFavoriteTwitterTweet(tweetEntity) {
+    fetch(`${twitterApiUri}/tweets`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tweetEntity)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if(!data.id){window.alert(`${tweetEntity.name}の登録が失敗しました。`); return;}
+            window.alert(`${data.name}の登録が完了しました。`);
+        })
+        .catch(error => console.error('Unable to add twitterUserEntity.', error));
+}
+
 function getTwitterUsersBySearchKeyWord() {
     const searchKeyWord = document.getElementById('twitter-search-keyword').value;
     fetch(`${twitterApiUri}/user_search/${searchKeyWord}`)
@@ -167,11 +191,11 @@ function _createTwitterUserElement(user)
     return row;
 }
 
-function _displayTweets(data) {
+function _displayTweets(data, isUniUser = true) {
     const resultBox = document.getElementById('twitter-search-results');
     resultBox.innerHTML = '';
 
-    resultBox.appendChild(_createTwitterUserElement(data[0].user));
+    if(isUniUser === true) resultBox.appendChild(_createTwitterUserElement(data[0].user));
 
     let tweetResultDaysEle = document.createElement('div');
     tweetResultDaysEle.id = "calendar_basic";
@@ -186,10 +210,12 @@ function _displayTweets(data) {
         row.style.marginLeft = "20px";
 
         let topbar = document.createElement('div');
-        topbar.innerHTML = '<br/>';
+        if(!isUniUser) topbar.innerHTML =  `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
+        topbar.innerHTML += '<br/>';
         row.appendChild(topbar);
 
         let tweetText = document.createElement('div');
+        tweetText.id = `text_${tweet.id}`;
         tweetText.innerHTML = tweet.text + '<br/>';
         row.appendChild(tweetText);
 
@@ -204,6 +230,42 @@ function _displayTweets(data) {
             */
         }
         row.appendChild(tweetInfo);
+
+        let btnbar = document.createElement('div');
+        {
+            let btnAddFavorite = document.createElement('button');
+            btnAddFavorite.textContent = "お気に入り登録"
+            btnAddFavorite.onclick = () => {
+                const tweetEntity = {
+                    "ownedUserId": loginUser.id,
+                    "div": "F",
+                    "tag": "",
+                    "TweetId": tweet.id,
+                    "text": tweet.text,
+                    "fullText": tweet.fullText ?? "",
+                    "retweetCount": tweet.retweetCount,
+                    "favoriteCount": tweet.favoriteCount,
+                    "source": tweet.source,
+                    "createdAt": tweet.createdAt,
+                    "tweetedUserId": tweet.user.id,
+                    "tweetedUserName": tweet.user.name,
+                    "tweetedUserScreenName": tweet.user.screenName
+                }
+                addMyFavoriteTwitterTweet(tweetEntity);
+            };
+            btnbar.appendChild(btnAddFavorite);
+            
+            let btnToggleEditMode = document.createElement('button');
+            btnToggleEditMode.textContent = "編集/参照"
+            btnToggleEditMode.onclick = () => {
+                const textEle = document.getElementById(`text_${tweet.id}`);
+                let isEditMode = false;
+                if(textEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
+                textEle.innerHTML = isEditMode ? textEle.textContent : ('<textarea rows="5" cols="80">' + textEle.innerText + '</textarea>');
+            };
+            btnbar.appendChild(btnToggleEditMode);
+        }
+        row.appendChild(btnbar);
 
         resultBox.appendChild(row);
     });

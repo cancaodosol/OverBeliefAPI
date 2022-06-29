@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace OverBeliefApi.Controllers
         }
 
         // GET: api/TwitterTweets
+        [EnableCors("All")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TwitterTweetEntity>>> GetTwitterTweetEntities()
         {
@@ -83,6 +85,7 @@ namespace OverBeliefApi.Controllers
 
         // POST: api/TwitterTweets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [EnableCors("All")]
         [HttpPost]
         public async Task<ActionResult<TwitterTweetEntity>> PostTwitterTweetEntity(TwitterTweetEntity twitterTweetEntity)
         {

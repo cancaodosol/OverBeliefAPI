@@ -57,6 +57,10 @@ window.onload = () => {
             }).appendTo("#btns-get-tweets");
         }
     });
+    
+    $("#btn-show-favorite-tweet").on('click', () => {
+        getMyFavoriteTwitterTweet();
+    });
 }
 function addMyFavoriteUserIds(screenName) {
     if(typeof(screenName) !== "string") return;
