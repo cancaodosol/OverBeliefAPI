@@ -15,7 +15,7 @@ namespace OverBeliefApi.Common
             IniData data;
             try 
             {
-                string iniPath = Environment.GetEnvironmentVariable("OVERBELIEFAPI_CONFIG_PATH");
+                string? iniPath = Environment.GetEnvironmentVariable("OVERBELIEFAPI_CONFIG_PATH");
                 if (string.IsNullOrWhiteSpace(iniPath)) 
                 {
                     iniPath = "overbeliefapi.ini";

@@ -1,5 +1,5 @@
-﻿const twitterApiUri = 'https://localhost:7233/api/twitter';
-//const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
+﻿// const twitterApiUri = 'https://localhost:7233/api/twitter';
+const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
 const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
@@ -11,10 +11,13 @@ const loginUser = {
     twitterAuthorizeUri : ""
 }
 
-function getMyFavoriteTwitterUsers() {
+function getMyFavoriteTwitterUsers(callbalk = function(){}) {
     fetch(`${twitterApiUri}/users`)
         .then(response => response.json())
-        .then(data => data.forEach(user => addMyFavoriteUserIds(user.screenName)))
+        .then(data => {
+            data.forEach(user => addMyFavoriteUserIds(user.screenName));
+            callbalk();
+        })
         .catch(error => console.error('Unable to get items.', error));
 }
 
@@ -29,8 +32,8 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
     })
         .then(response => response.json())
         .then(data => {
-            if(!data.id){window.alert(`${twitterUserEntity.name}の登録が失敗しました。`); return;}
-            window.alert(`${data.name}の登録が完了しました。`);
+            if(!data.id){window.alert(`【${twitterUserEntity.name}】の登録が失敗しました。`); return;}
+            window.alert(`【${data.name}】の登録が完了しました。`);
             addMyFavoriteUserIds(data.screenName);
             refreshMyFavoriteTweetsBox();
         })
@@ -40,7 +43,7 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
 function getMyFavoriteTwitterTweet() {
     fetch(`${twitterApiUri}/tweets`)
         .then(response => response.json())
-        .then(data => _displayTweets(data, false))
+        .then(data => _displayTweets(data.reverse()))
         .catch(error => console.error('Unable to get items.', error));
 }
 
@@ -55,8 +58,8 @@ function addMyFavoriteTwitterTweet(tweetEntity) {
     })
         .then(response => response.json())
         .then(data => {
-            if(!data.id){window.alert(`${tweetEntity.name}の登録が失敗しました。`); return;}
-            window.alert(`${data.name}の登録が完了しました。`);
+            if(!data.id){window.alert(`ツイートの登録が失敗しました。`); return;}
+            window.alert(`ツイートの登録が完了しました。`);
         })
         .catch(error => console.error('Unable to add twitterUserEntity.', error));
 }
@@ -191,31 +194,59 @@ function _createTwitterUserElement(user)
     return row;
 }
 
-function _displayTweets(data, isUniUser = true) {
+function _displayTweets(data) {
     const resultBox = document.getElementById('twitter-search-results');
     resultBox.innerHTML = '';
 
-    if(isUniUser === true) resultBox.appendChild(_createTwitterUserElement(data[0].user));
+    const isUniUser = data[0].user != null;
+    if(isUniUser) resultBox.appendChild(_createTwitterUserElement(data[0].user));
 
     let tweetResultDaysEle = document.createElement('div');
-    tweetResultDaysEle.id = "calendar_basic";
-    tweetResultDaysEle.style.width = "1000px";
-    tweetResultDaysEle.style.height = "350px";
-    resultBox.appendChild(tweetResultDaysEle);
-    drawChart(transformChartData(data), tweetResultDaysEle);
+    {
+        tweetResultDaysEle.id = "calendar_basic";
+        tweetResultDaysEle.style.width = "1000px";
+        tweetResultDaysEle.style.height = "350px";
+        resultBox.appendChild(tweetResultDaysEle);
+        drawChart(transformChartData(data), tweetResultDaysEle);
+    }
+
+    $('<div>', {
+        id: 'btns-get-recently-tweets'
+    }).appendTo($(resultBox));
+    {
+        $('<button>', {
+            onclick: "getRecentlyTweets(15)",
+            text: "最近の15件"
+        }).appendTo("#btns-get-recently-tweets");
+        $('<button>', {
+            onclick: "getRecentlyTweets(30)",
+            text: "最近の30件"
+        }).appendTo("#btns-get-recently-tweets");
+        $('<button>', {
+            onclick: "getRecentlyTweets(50)",
+            text: "最近の50件"
+        }).appendTo("#btns-get-recently-tweets");
+        $('<button>', {
+            onclick: "getRecentlyTweets(80)",
+            text: "最近の80件"
+        }).appendTo("#btns-get-recently-tweets");
+        $('<button>', {
+            onclick: "getRecentlyTweets()",
+            text: "全件表示"
+        }).appendTo("#btns-get-recently-tweets");
+    }
 
     data.forEach(tweet => {
         let row = document.createElement('div');
-        row.style.width = "600px";
-        row.style.marginLeft = "20px";
+        row.className = "tweet-card";
 
         let topbar = document.createElement('div');
         if(!isUniUser) topbar.innerHTML =  `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
-        topbar.innerHTML += '<br/>';
         row.appendChild(topbar);
 
         let tweetText = document.createElement('div');
         tweetText.id = `text_${tweet.id}`;
+        tweetText.className = "tweet-text";
         tweetText.innerHTML = tweet.text + '<br/>';
         row.appendChild(tweetText);
 
@@ -261,9 +292,20 @@ function _displayTweets(data, isUniUser = true) {
                 const textEle = document.getElementById(`text_${tweet.id}`);
                 let isEditMode = false;
                 if(textEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
-                textEle.innerHTML = isEditMode ? textEle.textContent : ('<textarea rows="5" cols="80">' + textEle.innerText + '</textarea>');
+                textEle.innerHTML = isEditMode ? textEle.textContent : ('<textarea rows="8" cols="60">' + textEle.innerText + '</textarea>');
             };
             btnbar.appendChild(btnToggleEditMode);
+            
+            if(!isUniUser)
+            {
+                let btnGetBestTweet = document.createElement('button');
+                btnGetBestTweet.textContent = "BestTweet検索"
+                btnGetBestTweet.onclick = () => {
+                    const screenName = tweet.tweetedUserScreenName;
+                    getTweetByUserName(screenName);
+                };
+                btnbar.appendChild(btnGetBestTweet);
+            }
         }
         row.appendChild(btnbar);
 

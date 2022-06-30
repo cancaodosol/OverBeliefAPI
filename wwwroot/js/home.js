@@ -16,46 +16,15 @@ window.onload = () => {
         id: 'btns-get-tweets'
     }).appendTo("#my-favorite-tweets-box");
     {
-        getMyFavoriteTwitterUsers();
-        refreshMyFavoriteTweetsBox();
+        getMyFavoriteTwitterUsers(refreshMyFavoriteTweetsBox);
     }
 
-    $('<div>', {
-        id: 'btns-get-recently-tweets'
-    }).appendTo("#my-favorite-tweets-box");
-    {
-        $('<button>', {
-            onclick: "getRecentlyTweets(15)",
-            text: "最近の15件"
-        }).appendTo("#btns-get-recently-tweets");
-        $('<button>', {
-            onclick: "getRecentlyTweets(30)",
-            text: "最近の30件"
-        }).appendTo("#btns-get-recently-tweets");
-        $('<button>', {
-            onclick: "getRecentlyTweets(50)",
-            text: "最近の50件"
-        }).appendTo("#btns-get-recently-tweets");
-        $('<button>', {
-            onclick: "getRecentlyTweets()",
-            text: "全件表示"
-        }).appendTo("#btns-get-recently-tweets");
-    }
+    getMyFavoriteTwitterTweet();
 
     // 画面イベント
     $("#btn-get-tweet-by-user-name").on('click', () => {
         const userName = $("#twitter-user-name").val();
         getTweetByUserName(userName);
-
-        if(myFavoriteTwitterUserIds.find(x => x.id === userName) === undefined)
-        {
-            myFavoriteTwitterUserIds.push({id: userName});
-            $('<button>', {
-                class: 'btn-get-tweets',
-                'data-id': userName,
-                text: "@" + userName
-            }).appendTo("#btns-get-tweets");
-        }
     });
     
     $("#btn-show-favorite-tweet").on('click', () => {

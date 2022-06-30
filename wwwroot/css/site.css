@@ -21,3 +21,41 @@ td {
     border: 1px solid;
     padding: 5px;
 }
+
+#btns-get-tweets {
+    width: 550px;
+    margin-bottom: 10px;
+}
+
+#btns-get-recently-tweets {
+    margin-bottom: 10px;
+}
+#btns-get-recently-tweets button{
+    margin-left: 7px;
+    margin-bottom: 5px;
+}
+
+.tweet-card {
+    width: 550px;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.tweet-card .tweet-text {
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.tweet-card button {
+    margin-left: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.btn-get-tweets {
+    margin-left: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
