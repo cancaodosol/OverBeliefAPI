@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\doc\**" />
+    <Content Remove="wwwroot\doc\**" />
+    <EmbeddedResource Remove="wwwroot\doc\**" />
+    <None Remove="wwwroot\doc\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CoreTweet" Version="1.0.0.483" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
