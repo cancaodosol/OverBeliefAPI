@@ -31,16 +31,6 @@
     <script src="js/site.js" asp-append-version="true"></script>
     <script src="js/twitter.js" asp-append-version="true"></script>
     <script src="js/home.js" asp-append-version="true"></script>
-    <script type="text/javascript">
-        let btnGetTweets = document.querySelectorAll(".btn-get-tweet");
-        btnGetTweets.forEach(function(target) {
-            target.addEventListener('click', function() {
-                const inputTwitterUserName = document.getElementById("twitter-user-name");
-                const userName = target.innerHTML;
-                inputTwitterUserName.value = userName.replace('@', '');
-                getTweetByUserName();
-            });
-        });
-    </script>
+    <script type="text/javascript"></script>
 </body>
 </html>

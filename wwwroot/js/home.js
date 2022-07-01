@@ -1,36 +1,5 @@
-const myFavoriteTwitterUserIds = [
-    {id : "mintia_tweet"},
-    {id : "annin_book"},
-    {id : "yuki_99_s"},
-    {id : "ottosan884"},
-    {id : "wakki131313"},
-    {id : "ziraiya01"},
-    {id : "akki_contents"},
-    {id : "0H1de"}
-];
+const myFavoriteTwitterUserIds = []; // {id:"", name:""}
 
-window.onload = () => {
-
-    // 画面表示
-    $('<div>', {
-        id: 'btns-get-tweets'
-    }).appendTo("#my-favorite-tweets-box");
-    {
-        getMyFavoriteTwitterUsers(refreshMyFavoriteTweetsBox);
-    }
-
-    getMyFavoriteTwitterTweet();
-
-    // 画面イベント
-    $("#btn-get-tweet-by-user-name").on('click', () => {
-        const userName = $("#twitter-user-name").val();
-        getTweetByUserName(userName);
-    });
-    
-    $("#btn-show-favorite-tweet").on('click', () => {
-        getMyFavoriteTwitterTweet();
-    });
-}
 function addMyFavoriteUserIds(screenName) {
     if(typeof(screenName) !== "string") return;
     if(myFavoriteTwitterUserIds.find(x => x.id === screenName)) return;
@@ -49,9 +18,47 @@ function refreshMyFavoriteTweetsBox() {
         }).appendTo("#btns-get-tweets");
     });
 
-    $(".btn-get-tweets").on('click', (e) => {
-        const userName = e.target.innerText;
+    $(".btn-get-tweets").on('click', async (e) => {
+        const userNameAt = e.target.innerText;
+        if(userNameAt.length === 0) return;
+        const userName = userNameAt.slice(1);
         $("#twitter-user-name").val(userName);
-        getTweetByUserName(userName);
+        const tweets = await getTweetByUserName(userName);
+        _displayTweets(tweets);
     });
 }
+
+async function ini() {
+
+    // 画面表示
+    $('<div>', {
+        id: 'btns-get-tweets'
+    }).appendTo("#my-favorite-tweets-box");
+    {
+        const users = await getMyFavoriteTwitterUsers();
+        users.forEach(user => {
+            myFavoriteTwitterUserIds.push({
+                    id: user.screenName,
+                    name: user.name
+                });
+        });
+        refreshMyFavoriteTweetsBox();
+    }
+
+    const tweets = await getMyFavoriteTwitterTweet();
+    _displayTweets(tweets);
+
+    // 画面イベント
+    $("#btn-get-tweet-by-user-name").on('click', async () => {
+        const userName = $("#twitter-user-name").val();
+        const tweets = await getTweetByUserName(userName);
+        _displayTweets(tweets);
+    });
+    
+    $("#btn-show-favorite-tweet").on('click', async () => {
+        const tweets = await getMyFavoriteTwitterTweet();
+        _displayTweets(tweets);
+    });
+}
+
+ini();

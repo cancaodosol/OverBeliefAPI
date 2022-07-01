@@ -11,14 +11,8 @@ const loginUser = {
     twitterAuthorizeUri : ""
 }
 
-function getMyFavoriteTwitterUsers(callbalk = function(){}) {
-    fetch(`${twitterApiUri}/users`)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(user => addMyFavoriteUserIds(user.screenName));
-            callbalk();
-        })
-        .catch(error => console.error('Unable to get items.', error));
+async function getMyFavoriteTwitterUsers() {
+    return await fetch(`${twitterApiUri}/users`).then(response => response.json());
 }
 
 function addMyFavoriteTwitterUsers(twitterUserEntity) {
@@ -40,11 +34,8 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
         .catch(error => console.error('Unable to add twitterUserEntity.', error));
 }
 
-function getMyFavoriteTwitterTweet() {
-    fetch(`${twitterApiUri}/tweets`)
-        .then(response => response.json())
-        .then(data => _displayTweets(data.reverse()))
-        .catch(error => console.error('Unable to get items.', error));
+async function getMyFavoriteTwitterTweet() {
+    return await fetch(`${twitterApiUri}/tweets`).then(response => response.json());
 }
 
 function addMyFavoriteTwitterTweet(tweetEntity) {
@@ -72,11 +63,8 @@ function getTwitterUsersBySearchKeyWord() {
         .catch(error => console.error('Unable to get items.', error));
 }
 
-function getTweetByUserName(userName) {
-    fetch(`${twitterApiUri}/tweet_best/${userName}`)
-        .then(response => response.json())
-        .then(data => _displayTweets(data))
-        .catch(error => console.error('Unable to get items.', error));
+async function getTweetByUserName(userName) {
+    return await fetch(`${twitterApiUri}/tweet_best/${userName}`).then(response => response.json());
 }
 
 function loginAuthorizeTwitter() {
@@ -204,8 +192,6 @@ function _displayTweets(data) {
     let tweetResultDaysEle = document.createElement('div');
     {
         tweetResultDaysEle.id = "calendar_basic";
-        tweetResultDaysEle.style.width = "1000px";
-        tweetResultDaysEle.style.height = "350px";
         resultBox.appendChild(tweetResultDaysEle);
         drawChart(transformChartData(data), tweetResultDaysEle);
     }
@@ -330,9 +316,6 @@ function getRecentlyTweets(tweetCount) {
     twitterTweets = tmpTwitterTweets;
 }
 
-google.charts.load("current", {packages:["calendar"]});
-google.charts.setOnLoadCallback(drawChart);
-
 function transformChartData(tweets){
     const countTweets = new Map();
     countTweets.has = (key) => {
@@ -359,25 +342,36 @@ function transformChartData(tweets){
 }
 
 function drawChart(data, chartTargetEle) {
-    var dataTable = new google.visualization.DataTable();
-    dataTable.addColumn({ type: 'date', id: 'Date' });
-    dataTable.addColumn({ type: 'number', id: 'Count' });
-    dataTable.addRows(data);
-
-    var chart = new google.visualization.Calendar(chartTargetEle);
-
-    var options = {
-      title: "Tweet Count",
-      height: 350,
-      noDataPattern: {
-        backgroundColor: '#f0f0f0',
-        color: '#fff'
-      },
-     colorAxis: {
-       minValue: 0,
-       colors: ['#FFFFFF', '#14c4a5']
-     }
-    };
-
-    chart.draw(dataTable, options);
+    const __drawChart = () => {
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({ type: 'date', id: 'Date' });
+        dataTable.addColumn({ type: 'number', id: 'Count' });
+        dataTable.addRows(data);
+    
+        var chart = new google.visualization.Calendar(chartTargetEle);
+    
+        var options = {
+            title: "Tweet Count",
+            height: 350,
+            noDataPattern: {
+                backgroundColor: '#f0f0f0',
+                color: '#fff'
+            },
+            colorAxis: {
+            minValue: 0,
+            colors: ['#FFFFFF', '#14c4a5']
+            }
+        };
+    
+        chart.draw(dataTable, options);
+    }
+    chartTargetEle.style.width = "1000px";
+    chartTargetEle.style.height = "350px";
+    if(!google.visualization || !google.visualization.DataTable || !google.visualization.Calendar)
+    {
+        google.charts.load("current", {packages:["calendar"]});
+        google.charts.setOnLoadCallback(function() { __drawChart(); });
+        return;
+    }
+    __drawChart();
 }
