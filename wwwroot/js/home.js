@@ -1,9 +1,10 @@
 const myFavoriteTwitterUserIds = []; // {id:"", name:""}
 
-function addMyFavoriteUserIds(screenName) {
-    if(typeof(screenName) !== "string") return;
-    if(myFavoriteTwitterUserIds.find(x => x.id === screenName)) return;
-    myFavoriteTwitterUserIds.push({id : screenName});
+function addMyFavoriteUserIds(user = {id:"", name:""}) {
+    if(typeof(user.id) !== "string") return;
+    if(typeof(user.name) !== "string") return;
+    if(myFavoriteTwitterUserIds.find(x => x.id === user.id)) return;
+    myFavoriteTwitterUserIds.push(user);
 }
 
 function refreshMyFavoriteTweetsBox() {

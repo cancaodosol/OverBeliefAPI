@@ -28,7 +28,7 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
         .then(data => {
             if(!data.id){window.alert(`【${twitterUserEntity.name}】の登録が失敗しました。`); return;}
             window.alert(`【${data.name}】の登録が完了しました。`);
-            addMyFavoriteUserIds(data.screenName);
+            addMyFavoriteUserIds({id:data.screenName, name:data.name});
             refreshMyFavoriteTweetsBox();
         })
         .catch(error => console.error('Unable to add twitterUserEntity.', error));
