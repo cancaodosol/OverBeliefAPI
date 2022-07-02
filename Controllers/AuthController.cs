@@ -13,11 +13,11 @@ namespace OverBeliefApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginUsersController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly LoginUserContext _context;
 
-        public LoginUsersController(LoginUserContext context)
+        public AuthController(LoginUserContext context)
         {
             _context = context;
         }
