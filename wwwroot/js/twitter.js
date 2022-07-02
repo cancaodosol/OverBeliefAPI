@@ -369,6 +369,7 @@ function drawChart(data, chartTargetEle) {
     chartTargetEle.style.height = "350px";
     if(!google.visualization || !google.visualization.DataTable || !google.visualization.Calendar)
     {
+        // https://groups.google.com/g/google-visualization-api/c/yzBtf7xl0dE?pli=1
         google.charts.load("current", {packages:["calendar"]});
         google.charts.setOnLoadCallback(function() { __drawChart(); });
         return;
