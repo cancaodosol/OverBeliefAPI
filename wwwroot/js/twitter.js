@@ -101,6 +101,12 @@ function updateUserPincode(pincode) {
         .catch(error => console.error('Unable to add item.', error));
 }
 
+const _iconbase = document.createElement("i");
+_iconbase.className = "bi-alarm";
+_iconbase.style.fontSize = "2rem";
+_iconbase.style.width = "32";
+_iconbase.style.height = "32";
+
 function _displayTwitterUsers(data) {
     const resultBox = document.getElementById('twitter-search-results');
     resultBox.innerHTML = '';
@@ -159,7 +165,9 @@ function _createTwitterUserElement(user)
     let btnbar = document.createElement('div');
     {
         let btnAddFavorite = document.createElement('button');
+        btnAddFavorite.appendChild(_iconbase);
         btnAddFavorite.textContent = "お気に入り登録"
+        btnAddFavorite.className = " btn btn-sm btn-outline-secondary";
         btnAddFavorite.onclick = () => {
             const userEntity = {
                 "ownedUserId": loginUser.id,
@@ -201,22 +209,27 @@ function _displayTweets(data) {
     }).appendTo($(resultBox));
     {
         $('<button>', {
+            class: "btn btn-primary",
             onclick: "getRecentlyTweets(15)",
             text: "最近の15件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
+            class: "btn btn-primary",
             onclick: "getRecentlyTweets(30)",
             text: "最近の30件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
+            class: "btn btn-primary",
             onclick: "getRecentlyTweets(50)",
             text: "最近の50件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
+            class: "btn btn-primary",
             onclick: "getRecentlyTweets(80)",
             text: "最近の80件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
+            class: "btn btn-primary",
             onclick: "getRecentlyTweets()",
             text: "全件表示"
         }).appendTo("#btns-get-recently-tweets");
@@ -251,7 +264,9 @@ function _displayTweets(data) {
         let btnbar = document.createElement('div');
         {
             let btnAddFavorite = document.createElement('button');
+            btnAddFavorite.appendChild(_iconbase);
             btnAddFavorite.textContent = "お気に入り登録"
+            btnAddFavorite.className = " btn btn-sm btn-outline-secondary";
             btnAddFavorite.onclick = () => {
                 const tweetEntity = {
                     "ownedUserId": loginUser.id,
@@ -274,6 +289,7 @@ function _displayTweets(data) {
             
             let btnToggleEditMode = document.createElement('button');
             btnToggleEditMode.textContent = "編集/参照"
+            btnToggleEditMode.className = " btn btn-sm btn-outline-secondary";
             btnToggleEditMode.onclick = () => {
                 const textEle = document.getElementById(`text_${tweet.id}`);
                 let isEditMode = false;
@@ -286,6 +302,7 @@ function _displayTweets(data) {
             {
                 let btnGetBestTweet = document.createElement('button');
                 btnGetBestTweet.textContent = "BestTweet検索"
+                btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
                 btnGetBestTweet.onclick = () => {
                     const screenName = tweet.tweetedUserScreenName;
                     getTweetByUserName(screenName);

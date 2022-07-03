@@ -13,7 +13,7 @@ function refreshMyFavoriteTweetsBox() {
 
     myFavoriteTwitterUserIds.forEach((x) => {
         $('<button>', {
-            class: 'btn-get-tweets',
+            class: 'btn-get-tweets btn btn-outline-secondary',
             'data-id': x.id,
             text: "@" + x.id
         }).appendTo("#btns-get-tweets");
