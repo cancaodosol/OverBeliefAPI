@@ -1,6 +1,14 @@
 // const authApiUri = 'https://localhost:7233/api/auth';
 const authApiUri = 'https://h1deblog.com/overbeliefapi/api/auth';
 
+async function getLoginUser(pscd="") {
+    if(!pscd || pscd.trim() === ""){
+        return await fetch(`${authApiUri}`).then(response => response.json());
+    }else{
+        return await fetch(`${authApiUri}?pscd=${pscd}`).then(response => response.json());
+    }
+}
+
 async function tryLoginUser(user){
     const result = await fetch(`${authApiUri}/login`, {
         method: 'POST',
@@ -64,8 +72,8 @@ async function ini() {
         const userEmailAddress = $("#inputEmailAddress").val();
         const userPassword = $("#inputPassword").val();
         const loginUser = {
-            "firstName" : userLastName,
-            "lastName" : userFirstName,
+            "firstName" : userFirstName,
+            "lastName" : userLastName,
             "emailAddress" : userEmailAddress,
             "password" : userPassword
         }

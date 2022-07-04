@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OverBeliefApi.Contexts;
+using OverBeliefApi.Models;
 using OverBeliefApi.Models.LoginUser;
 
 namespace OverBeliefApi.Controllers
@@ -24,9 +26,11 @@ namespace OverBeliefApi.Controllers
 
         // GET: api/LoginUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LoginUserEntity>>> GetLoginUserEntities()
+        public async Task<ActionResult> GetLoginUserEntities(string pscd = "")
         {
-            return await _context.LoginUserEntities.ToListAsync();
+            var p = new LoginParameters();
+            await p.InitValidate(HttpContext, _context, pscd).ConfigureAwait(false);
+            return Ok( new { HasLogined = p.HasLogined, UserId = p.UserID, UserName = p.UserName });
         }
 
         // GET: api/LoginUsers/5
@@ -86,16 +90,29 @@ namespace OverBeliefApi.Controllers
 
             if (loginUser.Password != dbUser.LoginPassword) return BadRequest();
 
+            var p = new LoginParameters();
+            p.SetCookie(dbUser, HttpContext);
+
             //HttpContext.Response.Headers.Add("Location", "https://localhost:7233/index.html");
             //return StatusCode(StatusCodes.Status303SeeOther);
             return Ok(new { isError = false, url = "./index.html" });
+        }
+
+        // GET: api/auth/logout
+        [HttpGet("logout")]
+        public ActionResult Logout()
+        {
+            var p = new LoginParameters();
+            p.Logout(HttpContext);
+            HttpContext.Response.Headers.Add("Location", "./login.html");
+            return StatusCode(StatusCodes.Status303SeeOther);
         }
 
         // POST: api/auth/signup
         [HttpPost("signup")]
         public async Task<ActionResult<LoginUserEntity>> PostSignupUserEntity(LoginUserApiDto signupUser)
         {
-            if (ExistsLoginUser(signupUser.EmailAddress)) return BadRequest();
+            if (ExistsSameEmailAddressUser(signupUser.EmailAddress)) return BadRequest();
 
             var user = new LoginUserEntity()
             {
@@ -104,7 +121,8 @@ namespace OverBeliefApi.Controllers
                 EmailAddress = signupUser.EmailAddress,
                 LoginPassword = signupUser.Password,
 
-                Id = this.getNewId(),
+                Id = this.GetNewId(),
+                PassCode = this.GetNewPassCode(),
                 CreateOn = DateTime.Now,
                 ModefiedOn = DateTime.Now
             };
@@ -112,18 +130,40 @@ namespace OverBeliefApi.Controllers
             _context.LoginUserEntities.Add(user);
             await _context.SaveChangesAsync();
 
+            var p = new LoginParameters();
+            p.SetCookie(user, HttpContext);
+
             return Ok(new { isError = false, url = "./index.html" });
         }
 
-        private long getNewId()
+        private long GetNewId()
         {
             var newId = new System.Random().NextInt64(10000000, 99999999);
             if (!LoginUserEntityExists(newId)) return newId; 
-            return getNewId();
+            return GetNewId();
         }
-        private bool ExistsLoginUser(string emailAddress)
+
+        private bool ExistsSameEmailAddressUser(string emailAddress)
         {
             return _context.LoginUserEntities.Any(x => x.EmailAddress == emailAddress);
+        }
+
+        private static readonly string passCodeChars = "0123456789abcdefghijklmnopqrstuvwxyz";
+        private string GetNewPassCode() 
+        {
+            var pscd = new StringBuilder();
+            var r = new Random();
+            for (var i=0; i< 16; i++) 
+            {
+                pscd.Append(passCodeChars[r.Next(passCodeChars.Length)]);
+            }
+            if (ExistsSamePassCodeUser(pscd.ToString())) return GetNewPassCode();
+            return pscd.ToString();
+        }
+
+        private bool ExistsSamePassCodeUser(string pscd)
+        {
+            return _context.LoginUserEntities.Any(x => x.PassCode == pscd);
         }
 
         //// DELETE: api/LoginUsers/5

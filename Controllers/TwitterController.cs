@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OverBeliefApi.Common;
+using OverBeliefApi.Contexts;
 using OverBeliefApi.Models;
 using OverBeliefApi.Models.LoginUser;
 using OverBeliefApi.Models.Twitter;
@@ -14,11 +15,13 @@ namespace OverBeliefApi.Controllers
     public class TwitterController : ControllerBase
     {
         private readonly TwitterApplication _twitterApplication;
+        private readonly LoginUserContext _loginUserContext;
         private Config config = Config.Instance;
 
-        public TwitterController()
+        public TwitterController(LoginUserContext loginUserContext)
         {
             _twitterApplication = new TwitterApplication();
+            _loginUserContext = loginUserContext;
         }
 
         /// <summary>
@@ -36,10 +39,10 @@ namespace OverBeliefApi.Controllers
             var OAuthSession = OAuth.Authorize(config.token.ConsumerKey, config.token.ConsumerSecret, config.web.CallBackUrl);
 
             var p = new LoginParameters();
-            p.InitValidate(HttpContext).ConfigureAwait(false); // ConfigureAwait(false)にすることで、await以降の処理も再度非同期で行われるらしい。
+            p.InitValidate(HttpContext, _loginUserContext).ConfigureAwait(false); // ConfigureAwait(false)にすることで、await以降の処理も再度非同期で行われるらしい。
             Console.WriteLine("UserID ; {0}, p.UserName : {1}", p.UserID, p.UserName);
 
-            p.UserName = "twitter loginでセットされました。";
+            // p.UserName = "twitter loginでセットされました。";
 
             // セッション情報にOAuthSessionの内容を保存
             HttpContext.Session.Set(nameof(OAuthSession), JsonSerializer.SerializeToUtf8Bytes(OAuthSession));
@@ -73,7 +76,7 @@ namespace OverBeliefApi.Controllers
         public async Task<IActionResult> TwitterCallBack([FromQuery]string? oauth_verifier = null, [FromQuery] string? oauth_token = null, [FromQuery] string? denied = null) 
         {
             var p = new TwitterCallbackParameters();
-            await p.InitValidate(HttpContext).ConfigureAwait(false);
+            await p.InitValidate(HttpContext, _loginUserContext).ConfigureAwait(false);
 
             p.oauth_verifier = oauth_verifier;
             p.oauth_token = oauth_token;

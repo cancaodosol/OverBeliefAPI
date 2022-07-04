@@ -1,4 +1,9 @@
-﻿namespace OverBeliefApi.Models
+﻿using Microsoft.EntityFrameworkCore;
+using OverBeliefApi.Common;
+using OverBeliefApi.Contexts;
+using OverBeliefApi.Models.LoginUser;
+
+namespace OverBeliefApi.Models
 {
     public class LoginParameters
     {
@@ -16,30 +21,83 @@
             }
         }
 
-        string _LoginToken;
-        public string LoginToken 
+        string? _PSCD;
+        public string? PSCD
         {
-            get { return _LoginToken; }
-            set { if (value != null) { SetCookie(nameof(LoginToken), value, true); } else { ClearCookie(nameof(LoginToken)); } }
+            get { return _PSCD; }
+            set
+            {
+                _PSCD = value;
+                if (value != null) { SetCookie(nameof(PSCD), value, true); }
+                else { ClearCookie(nameof(PSCD)); } 
+            }
         }
 
-        public string UserName
+        string _userName;
+        public string? UserName
         {
-            get { return TryGetCookie(nameof(UserName), out string ret) ? ret : null; }
-            set { if (value != null) { SetCookie(nameof(UserName), value, true); } else { ClearCookie(nameof(UserName)); } }
+            get { return _userName; }
+            set 
+            {
+                _userName = value;
+                if (value != null) { SetCookie(nameof(UserName), value, true); } else { ClearCookie(nameof(UserName)); } 
+            }
         }
-        public virtual async Task InitValidate(HttpContext _Context) 
+
+        public bool HasLogined { get { return UserID != null; } }
+        public virtual async Task InitValidate(HttpContext _Context, LoginUserContext loginUserContext, string? pscd = "") 
         {
             Context = _Context;
 
-            // Cookie由来のパラーメ―ターを読み込む
-            _userID = TryGetCookie(nameof(UserID), out string UserIDStr) && long.TryParse(UserIDStr, out long __userID) ? __userID : null as long?;
-            _LoginToken = TryGetCookie(nameof(LoginToken), out string __LoginTokenStr) ? __LoginTokenStr : null;
+            if (pscd == "")
+            {
+                // Cookie由来のパラーメ―ターを読み込む
+                pscd = TryGetCookie(nameof(PSCD), out string __LoginTokenStr) ? __LoginTokenStr : null;
+                _userID = TryGetCookie(nameof(UserID), out string UserIDStr) && long.TryParse(UserIDStr, out long __userID) ? __userID : null as long?;
+            }
 
             // ログイン確認
-            if (UserID != null) 
+            if (!string.IsNullOrWhiteSpace(pscd)) 
             {
+                var dbUser = await loginUserContext.LoginUserEntities
+                    .Where(x => x.PassCode == pscd).FirstOrDefaultAsync();
+                if (dbUser != null)
+                {
+                    // キャッシュの有効期限を延期する
+                    UserID = dbUser.Id;
+                    PSCD = pscd;
+                    UserName = dbUser.LastName + " " + dbUser.FirstName;
+                }
+                else 
+                {
+                    Logout();
+                }
             }
+        }
+
+        /// <summary>
+        /// サインアウト時に、Cookieを消す処理
+        /// </summary>
+        public void Logout(HttpContext context = null)
+        {
+            if(context != null) Context = context;
+            Context.Session.Clear();
+            PSCD = null;
+            UserID = null;
+            UserName = null;
+        }
+
+        /// <summary>
+        /// ユーザー情報をCookieに保存する．主にログイン後に、これを使ってセットする．
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="user"></param>
+        public void SetCookie(LoginUserEntity user, HttpContext context = null)
+        {
+            if (context != null) Context = context;
+            PSCD = user.PassCode;
+            UserID = user.Id;
+            UserName = user.LastName + " " + user.FirstName;
         }
 
         /// <summary>

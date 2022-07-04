@@ -4,11 +4,15 @@ const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
 const loginUser = {
-    id : 44117452,
+    hasLogined : false,
+    id : -1,
     name : "",
-    twitterPincode : "",
-    twitterResearchUsers : [],
-    twitterAuthorizeUri : ""
+}
+
+function setLoginUser(id="", name="", haslogined=false) {
+    loginUser.id = id;
+    loginUser.name = name;
+    loginUser.hasLogined = haslogined;
 }
 
 async function getMyFavoriteTwitterUsers() {
@@ -80,42 +84,28 @@ function loginAuthorizeTwitter() {
         .catch(error => console.error('Unable to get items.', error));
 }
 
-function updateUserPincode(pincode) {
-    const loginUserDto = {
-        id: loginUser.id,
-        twitterApiPincode: pincode
-    };
-
-    fetch(`${twitterApiUri}/user_authorize`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginUserDto)
-    })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data);
-        })
-        .catch(error => console.error('Unable to add item.', error));
-}
-
 const _iconbase = document.createElement("i");
 _iconbase.className = "bi-alarm";
 _iconbase.style.fontSize = "2rem";
 _iconbase.style.width = "32";
 _iconbase.style.height = "32";
 
-function _displayTwitterUsers(data) {
+function _displayTwitterUsers(users) {
+
     const resultBox = document.getElementById('twitter-search-results');
     resultBox.innerHTML = '';
 
-    data.forEach(user => {
+    if(users.length === 0)
+    {
+        resultBox.innerHTML = '対象データは、ありません。';
+        return;
+    }
+
+    users.forEach(user => {
         resultBox.appendChild(_createTwitterUserElement(user));
     });
 
-    twitterUsers = data;
+    twitterUsers = users;
 }
 
 function _createTwitterUserElement(user)
@@ -190,18 +180,24 @@ function _createTwitterUserElement(user)
     return row;
 }
 
-function _displayTweets(data) {
+function _displayTweets(tweets) {
     const resultBox = document.getElementById('twitter-search-results');
     resultBox.innerHTML = '';
 
-    const isUniUser = data[0].user != null;
-    if(isUniUser) resultBox.appendChild(_createTwitterUserElement(data[0].user));
+    if(tweets.length === 0)
+    {
+        resultBox.innerHTML = '対象データは、ありません。';
+        return;
+    }
+
+    const isUniUser = tweets[0].user != null;
+    if(isUniUser) resultBox.appendChild(_createTwitterUserElement(tweets[0].user));
 
     let tweetResultDaysEle = document.createElement('div');
     {
         tweetResultDaysEle.id = "calendar_basic";
         resultBox.appendChild(tweetResultDaysEle);
-        drawChart(transformChartData(data), tweetResultDaysEle);
+        drawChart(transformChartData(tweets), tweetResultDaysEle);
     }
 
     $('<div>', {
@@ -235,7 +231,7 @@ function _displayTweets(data) {
         }).appendTo("#btns-get-recently-tweets");
     }
 
-    data.forEach(tweet => {
+    tweets.forEach(tweet => {
         let row = document.createElement('div');
         row.className = "tweet-card";
 
@@ -317,7 +313,7 @@ function _displayTweets(data) {
         resultBox.appendChild(row);
     });
 
-    twitterTweets = data;
+    twitterTweets = tweets;
 }
 
 function getRecentlyTweets(tweetCount) {

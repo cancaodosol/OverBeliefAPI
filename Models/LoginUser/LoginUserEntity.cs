@@ -13,6 +13,7 @@ namespace OverBeliefApi.Models.LoginUser
         public string LoginPassword { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string PassCode { get; set; }
         public string? ScreenName { get; set; }
         public string? TwitterApiAccessToken { get; set; }
         public string? TwitterApiAccessTokenSecret { get; set; }
