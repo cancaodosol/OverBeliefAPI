@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OverBeliefApi.Common;
+using OverBeliefApi.Models;
 using OverBeliefApi.Models.LoginUser;
 using OverBeliefApi.Models.Twitter;
 using System.Text.Json;
@@ -34,6 +35,12 @@ namespace OverBeliefApi.Controllers
             //"{TwitterApiKey}", "{TwitterApiKeySecret}", "https://h1deblog.com/overbeliefapi/twitter/callback"
             var OAuthSession = OAuth.Authorize(config.token.ConsumerKey, config.token.ConsumerSecret, config.web.CallBackUrl);
 
+            var p = new LoginParameters();
+            p.InitValidate(HttpContext).ConfigureAwait(false); // ConfigureAwait(false)にすることで、await以降の処理も再度非同期で行われるらしい。
+            Console.WriteLine("UserID ; {0}, p.UserName : {1}", p.UserID, p.UserName);
+
+            p.UserName = "twitter loginでセットされました。";
+
             // セッション情報にOAuthSessionの内容を保存
             HttpContext.Session.Set(nameof(OAuthSession), JsonSerializer.SerializeToUtf8Bytes(OAuthSession));
 
@@ -43,26 +50,36 @@ namespace OverBeliefApi.Controllers
             return Ok(new { url=OAuthSession.AuthorizeUri.OriginalString });
         }
 
-        public class TwitterCallbackParameters
+        public class TwitterCallbackParameters: LoginParameters
         {
-            [FromQuery]
-            public string oauth_token { get; set; }
-            [FromQuery]
-            public string oauth_verifier { get; set; }
+            [FromQuery(Name = "oauth_token")]
+            public string? oauth_token { get; set; }
+            [FromQuery(Name = "oauth_verifier")]
+            public string? oauth_verifier { get; set; }
+            //[FromQuery(Name = "denied")] 認証キャンセルのときはこの値でかえってくる。
+            //public string denied { get; set; }
 
         }
 
         /// <summary>
         /// 「Twitterサインイン」の認証後のコールバックをここで受け取る．
+        /// ・承認後：oauth_verifier、oauth_verifierを取得
+        /// ・キャンセル：deniedを取得（これを設定しておかないと、ここの処理にはいらない．でも、使用はしない．）
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
         [EnableCors("All")]
         [HttpGet("callback")]
-        public async Task<IActionResult> TwitterCallBack([FromQuery] string oauth_token, [FromQuery] string oauth_verifier) 
+        public async Task<IActionResult> TwitterCallBack([FromQuery]string? oauth_verifier = null, [FromQuery] string? oauth_token = null, [FromQuery] string? denied = null) 
         {
+            var p = new TwitterCallbackParameters();
+            await p.InitValidate(HttpContext).ConfigureAwait(false);
+
+            p.oauth_verifier = oauth_verifier;
+            p.oauth_token = oauth_token;
+
             // 直リンクやTwitterの認証拒否はトップページへ飛ばす
-            if (oauth_token == null || oauth_verifier == null) 
+            if (p.oauth_token == null || p.oauth_verifier == null) 
             {
                 HttpContext.Response.Headers.Add("Location", "/");
                 return StatusCode(StatusCodes.Status303SeeOther);
@@ -79,7 +96,7 @@ namespace OverBeliefApi.Controllers
 
             if (OAuthSession != null) 
             {
-                var token = OAuthSession.GetTokens(oauth_verifier);
+                var token = OAuthSession.GetTokens(p.oauth_verifier);
             }
 
             HttpContext.Response.Headers.Add("Location", "/");
