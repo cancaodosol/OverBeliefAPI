@@ -59,3 +59,9 @@ td {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.tweet-count-text {
+    font-size: 1.2rem;
+    margin-left: 7px;
+    margin-right: 12px;
+}

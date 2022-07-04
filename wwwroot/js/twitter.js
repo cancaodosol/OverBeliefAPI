@@ -251,7 +251,9 @@ function _displayTweets(data) {
 
         let tweetInfo = document.createElement('div');
         {
-            tweetInfo.innerHTML = '💬 ' + 'no-data' + ' ㌟ ' + tweet.retweetCount + ' ♡ ' + tweet.favoriteCount + ' (' + tweet.createdAt + ') ' + tweet.source;
+            tweetInfo.innerHTML = '<img src="./image/heart.svg" alt="hart" width="15" height="15"><span class="tweet-count-text">' + tweet.favoriteCount + '</span>' + 
+                '<img src="./image/retweet.svg" alt="hart" width="15" height="15"><span class="tweet-count-text">' + tweet.retweetCount + '</span>' + 
+                ' (' + tweet.createdAt + ') ' + tweet.source;
             /*
             let linkToOriginalTweet = document.createElement('a');
             linkToOriginalTweet.href = tweet.entities.urls[0].url;
