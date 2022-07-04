@@ -27,41 +27,42 @@
   </head>
   <body class="text-center">
     
-<main class="form-signin">
-  <form>
-    <img class="mb-4" src="./image/icon_overbelief_white_green.svg" alt="" width="57" height="57">
-    <h1 class="h3 mb-3 fw-normal">Over Belief Tool</h1>
+  <main class="form-signin">
+    <form action="javascript:void(0);">
+      <img class="mb-4" src="./image/icon_overbelief_white_green.svg" alt="" width="57" height="57">
+      <h1 class="h3 mb-3 fw-normal">Over Belief Tool</h1>
 
-    <div class="form-floating">
-      <input type="text" class="form-control" id="inputLastName" placeholder="name@example.com">
-      <label for="inputLastName">名前（姓）</label>
-    </div>
-    <div class="form-floating">
-      <input type="text" class="form-control" id="inputFirstName" placeholder="name@example.com">
-      <label for="inputFirstName">名前（名）</label>
-    </div>
-    <div class="form-floating">
-      <input type="email" class="form-control" id="inputEmailAddress" placeholder="name@example.com">
-      <label for="inputEmailAddress">メールアドレス</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-      <label for="inputPassword">パスワード</label>
-    </div>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="inputLastName" placeholder="かまど">
+        <label for="inputLastName">名前（姓）</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="inputFirstName" placeholder="たんじろう">
+        <label for="inputFirstName">名前（名）</label>
+      </div>
+      <div class="form-floating">
+        <input type="email" class="form-control" id="inputEmailAddress" placeholder="name@example.com">
+        <label for="inputEmailAddress">メールアドレス</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+        <label for="inputPassword">パスワード</label>
+      </div>
 
-    <div class="checkbox mb-4">
-      <!--
-      <label>
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
-      -->
-    </div>
-    <button class="w-100 btn btn-lg btn-primary mb-2" type="submit">新規登録</button>
-    <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
-  </form>
-</main>
+      <div class="checkbox mb-4">
+        <!--
+        <label>
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+        -->
+      </div>
+      <button class="w-100 btn btn-lg btn-primary mb-2" type="submit" id="btn-user-signup">新規登録</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+    </form>
+  </main>
 
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="js/login.js" asp-append-version="true"></script>
 
-    
   </body>
 </html>

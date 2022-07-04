@@ -30,8 +30,8 @@
         <h1 class="visually-hidden">Twitter Research Tool</h1>
         <div class="container">
             <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-                <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                    <img src="./image/icon_overbelief_blue.svg" alt="overbelieficon" class="bi me-2" width="40" height="40">
+                <a href="./index.html" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+                    <img src="./image/icon_overbelief_green.svg" alt="overbelieficon" class="bi me-2" width="50" height="50">
                     <span class="fs-4">Over Belief</span>
                 </a>
 
@@ -45,9 +45,28 @@
                 </ul>
                 -->
 
-                <div class="col-md-3 text-end">
+                <div class="col-md-3 text-end" id="login-memu" style="display: none;">
                     <a class="btn btn-outline-primary me-2" href="./login.html">ログイン</a>
                     <a class="btn btn-primary" href="./signup.html">新規登録</a>
+                </div>
+
+                <div class="d-flex align-items-center" id="login-user-memu" style="display: none;">
+                    <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" id="login-user-text">○○さん、ようこそ</div>
+        
+                    <div class="flex-shrink-0 dropdown" id="login-user-icon">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="./image/icon_login_user.png" alt="mdo" width="32" height="32">
+                        </a>
+                        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
+                        <!--
+                        <li><a class="dropdown-item" href="#">New project...</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        -->
+                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </header>
         </div>

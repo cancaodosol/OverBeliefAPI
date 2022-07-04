@@ -13,7 +13,7 @@ function refreshMyFavoriteTweetsBox() {
 
     myFavoriteTwitterUserIds.forEach((x) => {
         $('<button>', {
-            class: 'btn-get-tweets btn btn-outline-secondary',
+            class: 'btn-get-tweets btn btn-sm btn-outline-secondary',
             'data-id': x.id,
             text: "@" + x.id
         }).appendTo("#btns-get-tweets");
@@ -60,6 +60,16 @@ async function ini() {
         const tweets = await getMyFavoriteTwitterTweet();
         _displayTweets(tweets);
     });
+
+    // ログインメニュー制御
+    const hadLogined = true;
+    if(hadLogined){
+        $("#login-memu").hide();
+        $("#login-user-memu").children().show();
+    }else{
+        $("#login-memu").show();
+        $("#login-user-memu").children().hide();
+    }
 }
 
 ini();

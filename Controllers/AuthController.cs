@@ -74,48 +74,73 @@ namespace OverBeliefApi.Controllers
             return NoContent();
         }
 
-        // POST: api/LoginUsers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<LoginUserEntity>> PostLoginUserEntity(LoginUserEntity loginUserEntity)
+        // POST: api/auth/login
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginUserEntity>> PostLoginUserEntity(LoginUserApiDto loginUser)
         {
-            if (loginUserEntity.Id == 0)
-            {
-                loginUserEntity.Id = this.getNewId();
-            }
-            _context.LoginUserEntities.Add(loginUserEntity);
-            await _context.SaveChangesAsync();
+            if (string.IsNullOrWhiteSpace(loginUser.EmailAddress)) return BadRequest();
+            if (string.IsNullOrWhiteSpace(loginUser.Password)) return BadRequest();
 
-            return CreatedAtAction("GetLoginUserEntity", new { id = loginUserEntity.Id }, loginUserEntity);
+            var dbUser = await _context.LoginUserEntities
+                .Where(x => x.EmailAddress == loginUser.EmailAddress).FirstOrDefaultAsync();
+
+            if (loginUser.Password != dbUser.LoginPassword) return BadRequest();
+
+            //HttpContext.Response.Headers.Add("Location", "https://localhost:7233/index.html");
+            //return StatusCode(StatusCodes.Status303SeeOther);
+            return Ok(new { isError = false, url = "./index.html" });
         }
 
-        private long getNewId() 
+        // POST: api/auth/signup
+        [HttpPost("signup")]
+        public async Task<ActionResult<LoginUserEntity>> PostSignupUserEntity(LoginUserApiDto signupUser)
+        {
+            if (ExistsLoginUser(signupUser.EmailAddress)) return BadRequest();
+
+            var user = new LoginUserEntity()
+            {
+                FirstName = signupUser.FirstName,
+                LastName = signupUser.LastName,
+                EmailAddress = signupUser.EmailAddress,
+                LoginPassword = signupUser.Password,
+
+                Id = this.getNewId(),
+                CreateOn = DateTime.Now,
+                ModefiedOn = DateTime.Now
+            };
+
+            _context.LoginUserEntities.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { isError = false, url = "./index.html" });
+        }
+
+        private long getNewId()
         {
             var newId = new System.Random().NextInt64(10000000, 99999999);
-            if (!existsLoginUser(newId)) return newId; 
+            if (!LoginUserEntityExists(newId)) return newId; 
             return getNewId();
         }
-        private bool existsLoginUser(long id)
+        private bool ExistsLoginUser(string emailAddress)
         {
-            var loginUserEntity = _context.LoginUserEntities.Find(id);
-            return loginUserEntity != null;
+            return _context.LoginUserEntities.Any(x => x.EmailAddress == emailAddress);
         }
 
-        // DELETE: api/LoginUsers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLoginUserEntity(long id)
-        {
-            var loginUserEntity = await _context.LoginUserEntities.FindAsync(id);
-            if (loginUserEntity == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/LoginUsers/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteLoginUserEntity(long id)
+        //{
+        //    var loginUserEntity = await _context.LoginUserEntities.FindAsync(id);
+        //    if (loginUserEntity == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.LoginUserEntities.Remove(loginUserEntity);
-            await _context.SaveChangesAsync();
+        //    _context.LoginUserEntities.Remove(loginUserEntity);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool LoginUserEntityExists(long id)
         {
