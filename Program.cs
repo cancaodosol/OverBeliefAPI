@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OverBeliefApi.Common;
-using OverBeliefApi.Contexts;
+using OverBeliefApi.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,17 +19,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-// ************************
-// DBテーブルの追加
-// ************************
-// ログインユーザー
-builder.Services.AddDbContext<LoginUserContext>((opt) =>
-    opt.UseSqlite("Data Source=Database/overbelief.db"));
-// ツイート
-builder.Services.AddDbContext<TwitterTweetContext>((opt) =>
-    opt.UseSqlite("Data Source=Database/overbelief.db"));
-// Twitterユーザー
-builder.Services.AddDbContext<TwitterUserContext>((opt) =>
+builder.Services.AddDbContext<MyContext>((opt) =>
     opt.UseSqlite("Data Source=Database/overbelief.db"));
 
 builder.Services.AddDistributedMemoryCache();

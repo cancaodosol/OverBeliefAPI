@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OverBeliefApi.Contexts;
+using OverBeliefApi.Database;
+using OverBeliefApi.Entites;
 using OverBeliefApi.Models;
 using OverBeliefApi.Models.Twitter;
 
@@ -16,13 +17,11 @@ namespace OverBeliefApi.Controllers
     [ApiController]
     public class TwitterUsersController : ControllerBase
     {
-        private readonly TwitterUserContext _context;
-        private readonly LoginUserContext _loginUserContext;
+        private readonly MyContext _context;
 
-        public TwitterUsersController(TwitterUserContext context, LoginUserContext loginUserContext)
+        public TwitterUsersController(MyContext context)
         {
             _context = context;
-            _loginUserContext = loginUserContext;
         }
 
         // GET: api/TwitterUsers
@@ -31,7 +30,7 @@ namespace OverBeliefApi.Controllers
         public async Task<ActionResult<IEnumerable<TwitterUserEntity>>> GetTwitterUserEntities()
         {
             var p = new LoginParameters();
-            await p.InitValidate(HttpContext, _loginUserContext).ConfigureAwait(false);
+            await p.InitValidate(HttpContext, _context).ConfigureAwait(false);
             if (!p.HasLogined) return NotFound();
             if (_context.TwitterUserEntities == null)
             {
@@ -45,7 +44,7 @@ namespace OverBeliefApi.Controllers
         public async Task<ActionResult<TwitterUserEntity>> GetTwitterUserEntity(long id)
         {
             var p = new LoginParameters();
-            await p.InitValidate(HttpContext, _loginUserContext).ConfigureAwait(false);
+            await p.InitValidate(HttpContext, _context).ConfigureAwait(false);
             if (!p.HasLogined) return NotFound();
 
             if (_context.TwitterUserEntities == null)
@@ -68,7 +67,7 @@ namespace OverBeliefApi.Controllers
         public async Task<IActionResult> PutTwitterUserEntity(long id, TwitterUserEntity twitterUserEntity)
         {
             var p = new LoginParameters();
-            await p.InitValidate(HttpContext, _loginUserContext).ConfigureAwait(false);
+            await p.InitValidate(HttpContext, _context).ConfigureAwait(false);
             if (!p.HasLogined) return NotFound();
             if (p.UserID != twitterUserEntity.OwnedUserId)
             {
@@ -108,7 +107,7 @@ namespace OverBeliefApi.Controllers
         public async Task<ActionResult<TwitterUserEntity>> PostTwitterUserEntity(TwitterUserEntity twitterUserEntity)
         {
             var p = new LoginParameters();
-            await p.InitValidate(HttpContext, _loginUserContext).ConfigureAwait(false);
+            await p.InitValidate(HttpContext, _context).ConfigureAwait(false);
             if (!p.HasLogined) return NotFound();
             if (p.UserID != twitterUserEntity.OwnedUserId)
             {

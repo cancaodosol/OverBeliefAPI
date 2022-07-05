@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OverBeliefApi.Models.Twitter
+namespace OverBeliefApi.Entites
 {
     [Table("TwitterUser")]
     public class TwitterUserEntity

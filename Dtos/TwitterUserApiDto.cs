@@ -1,4 +1,4 @@
-﻿namespace OverBeliefApi.Models.Twitter
+﻿namespace OverBeliefApi.Dtos
 {
     public class TwitterUserApiDto
     {

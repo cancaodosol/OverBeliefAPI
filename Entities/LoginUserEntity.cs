@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OverBeliefApi.Models.LoginUser
+namespace OverBeliefApi.Entites
 {
     [Table("LoginUser")]
     public class LoginUserEntity

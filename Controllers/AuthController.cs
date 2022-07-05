@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OverBeliefApi.Common;
-using OverBeliefApi.Contexts;
+using OverBeliefApi.Database;
+using OverBeliefApi.Entites;
 using OverBeliefApi.Models;
 using OverBeliefApi.Models.LoginUser;
 
@@ -18,10 +19,10 @@ namespace OverBeliefApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly LoginUserContext _context;
+        private readonly MyContext _context;
         private Config._web config = Config.Instance.web;
 
-        public AuthController(LoginUserContext context)
+        public AuthController(MyContext context)
         {
             _context = context;
         }
