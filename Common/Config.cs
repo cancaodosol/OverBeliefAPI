@@ -47,12 +47,17 @@ namespace OverBeliefApi.Common
         }
         public _token token;
 
-        public class _web 
+        public class _web
         {
+            public string HomeUrl { get; }
             public string CallBackUrl { get; }
-            public _web(IniData data) 
+            public _web(IniData data)
             {
-                CallBackUrl = data["web"][nameof(CallBackUrl)] ?? "";
+                // "https://localhost:7233" or "https://h1deblog.com/overbeliefapi"
+                HomeUrl = data["web"]["HomeUrl"] ?? "";
+
+                // "/api/twitter/callback"
+                CallBackUrl = HomeUrl + data["web"][nameof(CallBackUrl)] ?? "";
             }
         }
         public _web web;

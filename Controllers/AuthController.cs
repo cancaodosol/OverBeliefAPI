@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OverBeliefApi.Common;
 using OverBeliefApi.Contexts;
 using OverBeliefApi.Models;
 using OverBeliefApi.Models.LoginUser;
@@ -18,6 +19,7 @@ namespace OverBeliefApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly LoginUserContext _context;
+        private Config._web config = Config.Instance.web;
 
         public AuthController(LoginUserContext context)
         {
@@ -93,9 +95,9 @@ namespace OverBeliefApi.Controllers
             var p = new LoginParameters();
             p.SetCookie(dbUser, HttpContext);
 
-            //HttpContext.Response.Headers.Add("Location", "https://localhost:7233/index.html");
+            //HttpContext.Response.Headers.Add("Location", config.HomeUrl);
             //return StatusCode(StatusCodes.Status303SeeOther);
-            return Ok(new { isError = false, url = "./index.html" });
+            return Ok(new { isError = false, url = config.HomeUrl });
         }
 
         // GET: api/auth/logout
@@ -104,7 +106,7 @@ namespace OverBeliefApi.Controllers
         {
             var p = new LoginParameters();
             p.Logout(HttpContext);
-            HttpContext.Response.Headers.Add("Location", "./login.html");
+            HttpContext.Response.Headers.Add("Location", config.HomeUrl + "/login.html");
             return StatusCode(StatusCodes.Status303SeeOther);
         }
 
@@ -133,7 +135,7 @@ namespace OverBeliefApi.Controllers
             var p = new LoginParameters();
             p.SetCookie(user, HttpContext);
 
-            return Ok(new { isError = false, url = "./index.html" });
+            return Ok(new { isError = false, url = config.HomeUrl });
         }
 
         private long GetNewId()

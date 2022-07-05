@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OverBeliefApi.Common;
 using OverBeliefApi.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
