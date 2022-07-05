@@ -1,4 +1,4 @@
-﻿namespace OverBeliefApi.Models.LoginUser
+﻿namespace OverBeliefApi.Dtos
 {
     public class LoginUserApiDto
     {

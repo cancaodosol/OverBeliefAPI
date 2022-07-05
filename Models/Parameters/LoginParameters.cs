@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OverBeliefApi.Common;
-using OverBeliefApi.Contexts;
-using OverBeliefApi.Models.LoginUser;
+using OverBeliefApi.Database;
+using OverBeliefApi.Entites;
 
 namespace OverBeliefApi.Models
 {
@@ -45,7 +45,7 @@ namespace OverBeliefApi.Models
         }
 
         public bool HasLogined { get { return UserID != null; } }
-        public virtual async Task InitValidate(HttpContext _Context, LoginUserContext loginUserContext, string? pscd = "") 
+        public virtual async Task InitValidate(HttpContext _Context, MyContext DbContext, string? pscd = "") 
         {
             Context = _Context;
 
@@ -59,7 +59,7 @@ namespace OverBeliefApi.Models
             // ログイン確認
             if (!string.IsNullOrWhiteSpace(pscd)) 
             {
-                var dbUser = await loginUserContext.LoginUserEntities
+                var dbUser = await DbContext.LoginUserEntities
                     .Where(x => x.PassCode == pscd).FirstOrDefaultAsync();
                 if (dbUser != null)
                 {
