@@ -79,6 +79,8 @@ namespace OverBeliefApi.Controllers
                 return BadRequest();
             }
 
+            twitterUserEntity.ModefiedOn = DateTime.Now;
+
             _context.Entry(twitterUserEntity).State = EntityState.Modified;
 
             try
@@ -118,6 +120,9 @@ namespace OverBeliefApi.Controllers
             {
                 return Problem("Entity set 'TwitterUserContext.TwitterUserEntities'  is null.");
             }
+
+            twitterUserEntity.CreateOn = DateTime.Now;
+            twitterUserEntity.ModefiedOn = DateTime.Now;
 
             _context.TwitterUserEntities.Add(twitterUserEntity);
             await _context.SaveChangesAsync();

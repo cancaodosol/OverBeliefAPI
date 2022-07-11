@@ -18,5 +18,7 @@ namespace OverBeliefApi.Entites
         public string? ProfileBannerUrl { get; set; }
         public string? ProfileImageUrl { get; set; }
         public string? Description { get; set; }
+        public DateTime CreateOn { get; set; }
+        public DateTime ModefiedOn { get; set; }
     }
 }

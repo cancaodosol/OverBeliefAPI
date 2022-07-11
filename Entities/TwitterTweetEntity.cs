@@ -21,5 +21,7 @@ namespace OverBeliefApi.Entites
         public long TweetedUserId { get; set; }
         public string? TweetedUserName { get; set; }
         public string? TweetedUserScreenName { get; set; }
+        public DateTime CreateOn { get; set; }
+        public DateTime ModefiedOn { get; set; }
     }
 }
