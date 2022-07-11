@@ -45,7 +45,23 @@ td {
 .tweet-card .tweet-text {
     margin-top: 5px;
     margin-left: 5px;
-    margin-bottom: 5px;
+}
+
+.tweet-card .tweet-div-box {
+    text-align: right;
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
+.tweet-card .tweet-div-box.input-mode{
+    text-align: left;
+}
+
+.tweet-card .tweet-div-name {
+    font-size: 0.8rem;
+    margin-left: 5px;
+    margin-right: 5px;
+    color: darkgray;
 }
 
 .tweet-card button {

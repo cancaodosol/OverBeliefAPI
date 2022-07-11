@@ -197,7 +197,7 @@ function _displayTweets(tweets) {
     {
         tweetResultDaysEle.id = "calendar_basic";
         resultBox.appendChild(tweetResultDaysEle);
-        drawChart(transformChartData(tweets), tweetResultDaysEle);
+        drawChart(summaryTweetsForChatData(tweets), tweetResultDaysEle);
     }
 
     $('<div>', {
@@ -233,6 +233,7 @@ function _displayTweets(tweets) {
 
     tweets.forEach(tweet => {
         let row = document.createElement('div');
+        row.id = `tweet_id_${tweet.id}`;
         row.className = "tweet-card";
 
         let topbar = document.createElement('div');
@@ -240,10 +241,24 @@ function _displayTweets(tweets) {
         row.appendChild(topbar);
 
         let tweetText = document.createElement('div');
-        tweetText.id = `text_${tweet.id}`;
+        tweetText.id = `tweet-text-${tweet.id}`;
         tweetText.className = "tweet-text";
         tweetText.innerHTML = tweet.text + '<br/>';
         row.appendChild(tweetText);
+
+        let tweetDivs = document.createElement('div');
+        tweetDivs.id = `tweet-div-${tweet.id}`;
+        tweetDivs.className = "tweet-div-box";
+        tweet.div = "すいり,あかりん,たくみ,ダレン,あかりん,たくみ,ダレン,あかりん,たくみ";
+        let divNames = tweet.div ? tweet.div.split(',') : [];
+        divNames.forEach(divName => {
+            let divNameEle = document.createElement('a');
+            divNameEle.className = "tweet-div-name";
+            divNameEle.href = "#" + divName;
+            divNameEle.innerHTML = "#" + divName;
+            tweetDivs.appendChild(divNameEle);
+        });
+        row.appendChild(tweetDivs);
 
         let tweetInfo = document.createElement('div');
         {
@@ -284,18 +299,43 @@ function _displayTweets(tweets) {
                 addMyFavoriteTwitterTweet(tweetEntity);
             };
             btnbar.appendChild(btnAddFavorite);
-            
+        
             let btnToggleEditMode = document.createElement('button');
-            btnToggleEditMode.textContent = "編集/参照"
+            btnToggleEditMode.textContent = "編集"
             btnToggleEditMode.className = " btn btn-sm btn-outline-secondary";
             btnToggleEditMode.onclick = () => {
-                const textEle = document.getElementById(`text_${tweet.id}`);
+                const thisTextEle = document.getElementById(`tweet-text-${tweet.id}`);
+                const thisDivsEle = document.getElementById(`tweet-div-${tweet.id}`);
+
                 let isEditMode = false;
-                if(textEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
-                textEle.innerHTML = isEditMode ? textEle.textContent : ('<textarea rows="8" cols="60">' + textEle.innerText + '</textarea>');
+                if(thisTextEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
+
+                if(!isEditMode){
+                    thisTextEle.innerHTML = '<textarea rows="8" cols="60">' + thisTextEle.innerText + '</textarea>';
+                    tweetDivs.innerHTML = '<textarea rows="1" cols="60">' + tweet.div + '</textarea>';
+                    tweetDivs.classList.add("input-mode");
+                    btnToggleEditMode.textContent = "保存";
+                }else{
+                    tweet.text = thisTextEle.firstElementChild.value;
+                    tweet.div = thisDivsEle.firstElementChild.value;
+
+                    thisTextEle.innerHTML = tweet.text;
+                    tweetDivs.classList.remove("input-mode");
+
+                    thisDivsEle.innerHTML = "";
+                    let divNames = tweet.div ? tweet.div.split(',') : [];
+                    divNames.forEach(divName => {
+                        let divNameEle = document.createElement('a');
+                        divNameEle.className = "tweet-div-name";
+                        divNameEle.href = "#" + divName;
+                        divNameEle.innerHTML = "#" + divName;
+                        thisDivsEle.appendChild(divNameEle);
+                    });
+                    btnToggleEditMode.textContent = "編集";
+                }
             };
             btnbar.appendChild(btnToggleEditMode);
-            
+        
             if(!isUniUser)
             {
                 let btnGetBestTweet = document.createElement('button');
@@ -331,7 +371,7 @@ function getRecentlyTweets(tweetCount) {
     twitterTweets = tmpTwitterTweets;
 }
 
-function transformChartData(tweets){
+function summaryTweetsForChatData(tweets){
     const countTweets = new Map();
     countTweets.has = (key) => {
         return typeof countTweets.get(key) !== "undefined";
