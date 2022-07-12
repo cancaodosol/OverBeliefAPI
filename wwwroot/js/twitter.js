@@ -195,7 +195,7 @@ function _displayTweets(tweets) {
 
     let tweetResultDaysEle = document.createElement('div');
     {
-        tweetResultDaysEle.id = "calendar_basic";
+        tweetResultDaysEle.id = "twitter_calendar";
         resultBox.appendChild(tweetResultDaysEle);
         drawChart(summaryTweetsForChatData(tweets), tweetResultDaysEle);
     }
@@ -240,7 +240,7 @@ function _displayTweets(tweets) {
         if(!isUniUser) topbar.innerHTML =  `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
         row.appendChild(topbar);
 
-        let tweetText = document.createElement('div');
+        let tweetText = document.createElement('p');
         tweetText.id = `tweet-text-${tweet.id}`;
         tweetText.className = "tweet-text";
         tweetText.innerHTML = tweet.text + '<br/>';
@@ -340,9 +340,10 @@ function _displayTweets(tweets) {
                 let btnGetBestTweet = document.createElement('button');
                 btnGetBestTweet.textContent = "BestTweet検索"
                 btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
-                btnGetBestTweet.onclick = () => {
+                btnGetBestTweet.onclick = async () => {
                     const screenName = tweet.tweetedUserScreenName;
-                    getTweetByUserName(screenName);
+                    const tweets = await getTweetByUserName(screenName);
+                    _displayTweets(tweets);
                 };
                 btnbar.appendChild(btnGetBestTweet);
             }
@@ -401,12 +402,21 @@ function drawChart(data, chartTargetEle) {
         dataTable.addColumn({ type: 'date', id: 'Date' });
         dataTable.addColumn({ type: 'number', id: 'Count' });
         dataTable.addRows(data);
+
+        // カレンダーの幅調整：https://stackoverflow.com/questions/61229240/how-to-make-google-calendar-chart-mobile-responsive
+        var chartElement = document.getElementById('twitter_calendar');
+        var cellSize = Math.max(12,((chartElement.offsetWidth*0.9)/52));
+        var years = 2;
+        var chartHeight = (cellSize*7*years) + (4*years*cellSize);
     
         var chart = new google.visualization.Calendar(chartTargetEle);
     
         var options = {
             title: "Tweet Count",
-            height: 350,
+            height: chartHeight,
+            calendar: {
+                cellSize: cellSize
+            },
             noDataPattern: {
                 backgroundColor: '#f0f0f0',
                 color: '#fff'
@@ -419,8 +429,7 @@ function drawChart(data, chartTargetEle) {
     
         chart.draw(dataTable, options);
     }
-    chartTargetEle.style.width = "1000px";
-    chartTargetEle.style.height = "350px";
+
     if(!google.visualization || !google.visualization.DataTable || !google.visualization.Calendar)
     {
         // https://groups.google.com/g/google-visualization-api/c/yzBtf7xl0dE?pli=1

@@ -23,7 +23,8 @@ td {
 }
 
 #btns-get-tweets {
-    width: 550px;
+    width: 100%;
+    max-width: 550px;
     margin-bottom: 10px;
 }
 
@@ -35,14 +36,20 @@ td {
     margin-bottom: 5px;
 }
 
+#twitter_calendar {
+    width: 100%;
+    max-width: 800px;
+}
+
 .tweet-card {
-    width: 550px;
+    width: 100%;
+    max-width: 550px;
     margin-top: 20px;
-    margin-left: 20px;
     margin-bottom: 20px;
 }
 
 .tweet-card .tweet-text {
+    font-size: 20px;
     margin-top: 5px;
     margin-left: 5px;
 }
