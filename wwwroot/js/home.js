@@ -1,7 +1,7 @@
-const myFavoriteTwitterUserIds = []; // {id:"", name:""}
+const myFavoriteTwitterUserIds = []; // {id:"", name:"", iconUri:""}
 let userLogined = false;
 
-function addMyFavoriteUserIds(user={id:"", name:""}) {
+function addMyFavoriteUserIds(user={id:"", name:"", iconUri:""}) {
     if(typeof(user.id) !== "string") return;
     if(typeof(user.name) !== "string") return;
     if(myFavoriteTwitterUserIds.find(x => x.id === user.id)) return;
@@ -13,17 +13,15 @@ function refreshMyFavoriteTweetsBox() {
     btnsGetTweets.innerHTML = '';
 
     myFavoriteTwitterUserIds.forEach((x) => {
-        $('<button>', {
-            class: 'btn-get-tweets btn btn-sm btn-outline-secondary',
-            'data-id': x.id,
-            text: "@" + x.id
-        }).appendTo("#btns-get-tweets");
+        let btnGetTweets = document.createElement('button');
+        btnGetTweets.className = 'btn-get-tweets btn btn-sm btn-outline-secondary';
+        btnGetTweets.dataset.id = x.id;
+        btnGetTweets.innerHTML = `<img src="${x.iconUri}">` + x.id;
+        btnsGetTweets.appendChild(btnGetTweets);
     });
 
     $(".btn-get-tweets").on('click', async (e) => {
-        const userNameAt = e.target.innerText;
-        if(userNameAt.length === 0) return;
-        const userName = userNameAt.slice(1);
+        const userName = e.target.dataset.id;
         $("#twitter-user-name").val(userName);
         const tweets = await getTweetByUserName(userName);
         _displayTweets(tweets);
@@ -60,6 +58,10 @@ async function ini() {
         $("#login-user-memu").children().hide();
     }
 
+    $("#btn-twitter-auth").on('click', () => {
+        loginAuthorizeTwitter();
+    });
+
     // 画面表示
     $('<div>', {
         id: 'btns-get-tweets'
@@ -70,7 +72,8 @@ async function ini() {
             users.forEach(user => {
                 addMyFavoriteUserIds({
                         id: user.screenName,
-                        name: user.name
+                        name: user.name,
+                        iconUri: user.profileImageUrl
                     });
             });
             refreshMyFavoriteTweetsBox();

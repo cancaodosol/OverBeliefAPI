@@ -32,7 +32,7 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
         .then(data => {
             if(!data.id){window.alert(`【${twitterUserEntity.name}】の登録が失敗しました。`); return;}
             window.alert(`【${data.name}】の登録が完了しました。`);
-            addMyFavoriteUserIds({id:data.screenName, name:data.name});
+            addMyFavoriteUserIds({id:data.screenName, name:data.name, iconUri:data.profileImageUrl});
             refreshMyFavoriteTweetsBox();
         })
         .catch(error => console.error('Unable to add twitterUserEntity.', error));
@@ -243,7 +243,7 @@ function _displayTweets(tweets) {
         let tweetText = document.createElement('p');
         tweetText.id = `tweet-text-${tweet.id}`;
         tweetText.className = "tweet-text";
-        tweetText.innerHTML = tweet.text + '<br/>';
+        tweetText.innerHTML = tweet.text;
         row.appendChild(tweetText);
 
         let tweetTags = document.createElement('div');

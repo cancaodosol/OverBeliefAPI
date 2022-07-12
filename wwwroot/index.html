@@ -36,7 +36,7 @@
                 </a>
 
                 <!--
-                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-left mb-md-0">
                     <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
                     <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
                     <li><a href="#" class="nav-link px-2 link-dark">Pricing</a></li>
@@ -64,7 +64,9 @@
                         <li><a class="dropdown-item" href="#">Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         -->
-                        <li><a class="dropdown-item" href="api/auth/logout">Logout</a></li>
+                        <li><a id="btn-show-favorite-tweet" class="dropdown-item" href="#Tweets">お気に入りツイート表示</a></li>
+                        <li><a id="btn-twitter-auth" class="dropdown-item" href="#TwitterAuth">Twitter認証</a></li>
+                        <li><a class="dropdown-item" href="api/auth/logout">ログアウト</a></li>
                         </ul>
                     </div>
                 </div>
@@ -72,12 +74,6 @@
         </div>
 
         <div class="container" style="padding: 15px;">
-            <div class="row">
-                <article class="mb-4">
-                    <h3>Authorize User</h3>
-                    <button class="btn btn-primary" onclick="loginAuthorizeTwitter()">認証ページ表示</button>
-                </article>
-            </div>
             <div class="row">
                 <article class="mb-4">
                 <h3>Profile Banner Search</h3>
@@ -95,7 +91,6 @@
                         <input class="btn btn-primary" type="submit" id="btn-get-tweet-by-user-name" value="ユーザー名検索">
                     </form>
                     <div id="my-favorite-tweets-box" class="m-2"></div>
-                    <button id="btn-show-favorite-tweet" class="btn btn-primary">お気に入りツイートの表示</button>
                 </article>
             </div>
             <div class="row">
