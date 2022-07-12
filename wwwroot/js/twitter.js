@@ -246,19 +246,18 @@ function _displayTweets(tweets) {
         tweetText.innerHTML = tweet.text + '<br/>';
         row.appendChild(tweetText);
 
-        let tweetDivs = document.createElement('div');
-        tweetDivs.id = `tweet-div-${tweet.id}`;
-        tweetDivs.className = "tweet-div-box";
-        tweet.div = "すいり,あかりん,たくみ,ダレン,あかりん,たくみ,ダレン,あかりん,たくみ";
-        let divNames = tweet.div ? tweet.div.split(',') : [];
-        divNames.forEach(divName => {
-            let divNameEle = document.createElement('a');
-            divNameEle.className = "tweet-div-name";
-            divNameEle.href = "#" + divName;
-            divNameEle.innerHTML = "#" + divName;
-            tweetDivs.appendChild(divNameEle);
+        let tweetTags = document.createElement('div');
+        tweetTags.id = `tweet-tag-${tweet.id}`;
+        tweetTags.className = "tweet-tag-box";
+        let tagNames = tweet.tag ? tweet.tag.split(',') : [];
+        tagNames.forEach(tagName => {
+            let tagNameEle = document.createElement('a');
+            tagNameEle.className = "tweet-tag-name";
+            tagNameEle.href = "#" + tagName;
+            tagNameEle.innerHTML = "#" + tagName;
+            tweetTags.appendChild(tagNameEle);
         });
-        row.appendChild(tweetDivs);
+        row.appendChild(tweetTags);
 
         let tweetInfo = document.createElement('div');
         {
@@ -305,31 +304,31 @@ function _displayTweets(tweets) {
             btnToggleEditMode.className = " btn btn-sm btn-outline-secondary";
             btnToggleEditMode.onclick = () => {
                 const thisTextEle = document.getElementById(`tweet-text-${tweet.id}`);
-                const thisDivsEle = document.getElementById(`tweet-div-${tweet.id}`);
+                const thisTagsEle = document.getElementById(`tweet-tag-${tweet.id}`);
 
                 let isEditMode = false;
                 if(thisTextEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
 
                 if(!isEditMode){
                     thisTextEle.innerHTML = '<textarea rows="8" cols="60">' + thisTextEle.innerText + '</textarea>';
-                    tweetDivs.innerHTML = '<textarea rows="1" cols="60">' + tweet.div + '</textarea>';
-                    tweetDivs.classList.add("input-mode");
+                    thisTagsEle.innerHTML = '<textarea rows="1" cols="60">' + (tweet.tag ? tweet.tag : '') + '</textarea>';
+                    thisTagsEle.classList.add("input-mode");
                     btnToggleEditMode.textContent = "保存";
                 }else{
                     tweet.text = thisTextEle.firstElementChild.value;
-                    tweet.div = thisDivsEle.firstElementChild.value;
+                    tweet.tag = thisTagsEle.firstElementChild.value;
 
                     thisTextEle.innerHTML = tweet.text;
-                    tweetDivs.classList.remove("input-mode");
+                    thisTagsEle.classList.remove("input-mode");
 
-                    thisDivsEle.innerHTML = "";
-                    let divNames = tweet.div ? tweet.div.split(',') : [];
-                    divNames.forEach(divName => {
-                        let divNameEle = document.createElement('a');
-                        divNameEle.className = "tweet-div-name";
-                        divNameEle.href = "#" + divName;
-                        divNameEle.innerHTML = "#" + divName;
-                        thisDivsEle.appendChild(divNameEle);
+                    thisTagsEle.innerHTML = "";
+                    let tagNames = tweet.tag ? tweet.tag.split(',') : [];
+                    tagNames.forEach(tagName => {
+                        let tagNameEle = document.createElement('a');
+                        tagNameEle.className = "tweet-tag-name";
+                        tagNameEle.href = "#" + tagName;
+                        tagNameEle.innerHTML = "#" + tagName;
+                        thisTagsEle.appendChild(tagNameEle);
                     });
                     btnToggleEditMode.textContent = "編集";
                 }
