@@ -431,7 +431,7 @@ function drawChart(data, chartTargetEle) {
         var chartElement = document.getElementById('twitter_calendar');
         var cellSize = Math.max(1,((chartElement.offsetWidth*0.9)/52));
         var years = maxyear - minyear + 1;
-        var chartHeight = (cellSize*7*years) + (4*years*cellSize);
+        var chartHeight = (cellSize*7*years) + (3*years*cellSize) + (3*cellSize);
     
         var chart = new google.visualization.Calendar(chartTargetEle);
     
