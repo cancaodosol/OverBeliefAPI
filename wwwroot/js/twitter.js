@@ -59,6 +59,23 @@ function addMyFavoriteTwitterTweet(tweetEntity) {
         .catch(error => console.error('Unable to add twitterUserEntity.', error));
 }
 
+function editMyFavoriteTwitterTweet(tweetEntity) {
+    fetch(`${twitterApiUri}/tweets/${tweetEntity.id}`, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tweetEntity)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if(!data.id){window.alert(`ツイートの更新が失敗しました。`); return;}
+            window.alert(`ツイートの更新が完了しました。`);
+        })
+        .catch(error => console.error('Unable to add twitterUserEntity.', error));
+}
+
 function getTwitterUsersBySearchKeyWord() {
     const searchKeyWord = document.getElementById('twitter-search-keyword').value;
     fetch(`${twitterApiUri}/user_search/${searchKeyWord}`)
@@ -317,6 +334,8 @@ function _displayTweets(tweets) {
                 }else{
                     tweet.text = thisTextEle.firstElementChild.value;
                     tweet.tag = thisTagsEle.firstElementChild.value;
+
+                    let ret = editMyFavoriteTwitterTweet(tweet);
 
                     thisTextEle.innerHTML = tweet.text;
                     thisTagsEle.classList.remove("input-mode");

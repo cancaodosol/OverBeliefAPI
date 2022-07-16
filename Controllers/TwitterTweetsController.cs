@@ -79,9 +79,18 @@ namespace OverBeliefApi.Controllers
                 return BadRequest();
             }
 
-            twitterTweetEntity.ModefiedOn = DateTime.Now;
+            var dbEntity = _context.TwitterTweetEntities.Find(twitterTweetEntity.Id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
 
-            _context.Entry(twitterTweetEntity).State = EntityState.Modified;
+            var tagNames = twitterTweetEntity.Tag.Split(',').Select(x => x.Trim()).ToList();
+            dbEntity.Text = twitterTweetEntity.Text;
+            dbEntity.Tag = string.Join(',', tagNames);
+            dbEntity.ModefiedOn = DateTime.Now;
+
+            _context.Entry(dbEntity).State = EntityState.Modified;
 
             try
             {
