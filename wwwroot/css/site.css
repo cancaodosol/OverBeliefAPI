@@ -55,8 +55,15 @@ td {
     margin-bottom: 20px;
 }
 
+.tweet-card .tweet-card-header {
+    font-size: 1.0rem;
+}
+.tweet-card .tweet-card-footer {
+    font-size: 0.7rem;
+}
+
 .tweet-card .tweet-text {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     margin-top: 5px;
     margin-left: 5px;
 }
@@ -90,7 +97,7 @@ td {
     margin-bottom: 5px;
 }
 
-.tweet-count-text {
+.tweet-card .tweet-count-text {
     font-size: 1.2rem;
     margin-left: 7px;
     margin-right: 12px;

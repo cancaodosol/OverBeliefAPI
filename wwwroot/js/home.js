@@ -50,7 +50,7 @@ async function ini() {
         const id = retLoginUser.userId;
         const name = retLoginUser.userName;
         setLoginUser(id, name, userLogined);
-        $("#login-user-text").text(`${name}さん、ようこそ。`);
+        // $("#login-user-text").text(`${name}さん、ようこそ。`);
         $("#login-memu").hide();
         $("#login-user-memu").children().show();
     } else {

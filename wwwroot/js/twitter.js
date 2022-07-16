@@ -254,10 +254,11 @@ function _displayTweets(tweets) {
         row.className = "tweet-card";
 
         let topbar = document.createElement('div');
+        topbar.className = "tweet-card-header";
         if(!isUniUser) topbar.innerHTML =  `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
         row.appendChild(topbar);
 
-        let tweetText = document.createElement('p');
+        let tweetText = document.createElement('div');
         tweetText.id = `tweet-text-${tweet.id}`;
         tweetText.className = "tweet-text";
         tweetText.innerHTML = tweet.text;
@@ -277,6 +278,7 @@ function _displayTweets(tweets) {
         row.appendChild(tweetTags);
 
         let tweetInfo = document.createElement('div');
+        tweetInfo.className = "tweet-card-footer";
         {
             tweetInfo.innerHTML = '<img src="./image/heart.svg" alt="hart" width="15" height="15"><span class="tweet-count-text">' + tweet.favoriteCount + '</span>' + 
                 '<img src="./image/retweet.svg" alt="hart" width="15" height="15"><span class="tweet-count-text">' + tweet.retweetCount + '</span>' + 
@@ -424,7 +426,7 @@ function drawChart(data, chartTargetEle) {
 
         // カレンダーの幅調整：https://stackoverflow.com/questions/61229240/how-to-make-google-calendar-chart-mobile-responsive
         var chartElement = document.getElementById('twitter_calendar');
-        var cellSize = Math.max(12,((chartElement.offsetWidth*0.9)/52));
+        var cellSize = Math.max(1,((chartElement.offsetWidth*0.9)/52));
         var years = 2;
         var chartHeight = (cellSize*7*years) + (4*years*cellSize);
     
