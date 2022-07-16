@@ -70,16 +70,15 @@ namespace OverBeliefApi.Models.Twitter
         /// <param name="searchResultMax"></param>
         public List<User> GetProfileBannersBySearchKeyWord(string searchKeyWord, int searchResultMax)
         {
-            /*
-            this.DisplayTweets(_twitterService.GetTweetsOfTargetUser("memoer15", 5));
-            this.DisplayTweets(_twitterService.GetTweetsOfFrinds(5));
-            this.DisplayTweets(_twitterService.GetSearchTweets("Airbnbが熱すぎる！", 10));
-            */
-            // this.DisplayTweets(_twitterService.GetTweetsOfTargetUser("memoer15", 5));
             var states = _twitterService.GetSearchTweets(searchKeyWord, searchResultMax);
-            // this.DisplayTweets(states);
             var users = states.Select(x => x.User).ToList();
-            // this.SaveUserProfileBanner(users, searchKeyWord);
+            for (var i = 0; i < users.Count; i++)
+            {
+                for (var j = users.Count-1; j > i; j--)
+                {
+                    if (users[i].Id == users[j].Id) users.RemoveAt(j);
+                }
+            }
             return users;
         }
         public void SaveUserProfileBanner(List<User> users, string fileNameKeyWord)

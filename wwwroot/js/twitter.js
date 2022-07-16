@@ -128,26 +128,26 @@ function _displayTwitterUsers(users) {
 function _createTwitterUserElement(user)
 {
     let row = document.createElement('div');
-    row.style.width = "600px";
-    row.style.marginBottom = "20px";
+    row.className = "twitter-profile-card";
 
-    let topbar = document.createElement('h4');
-    topbar.innerHTML = user.name;
+    let topbar = document.createElement('div');
+    topbar.className = "twitter-profile-card-header";
+    topbar.innerHTML = `[ ${user.name} ]`;
     row.appendChild(topbar);
 
     let profileBanner = document.createElement('img');
+    profileBanner.className = "twitter-profilebar-img";
     profileBanner.src = user.profileBannerUrl;
-    profileBanner.height = 200;
-    profileBanner.width = 600;
+    profileBanner.setAttribute("onerror", "this.src='./image/nodata-frofile.png';");
     row.appendChild(profileBanner);
 
     let profileImage = document.createElement('img');
+    profileImage.className = "twitter-profileicon-img";
     profileImage.src = user.profileImageUrl;
-    profileImage.height = 135;
-    profileImage.width = 135;
     row.appendChild(profileImage);
 
     let profileName = document.createElement('div');
+    profileName.className = "twitter-name";
     {
         let name = document.createElement('div');
         name.innerHTML = user.name;
@@ -157,16 +157,17 @@ function _createTwitterUserElement(user)
         screenName.innerHTML = '@' + user.screenName;
         profileName.appendChild(screenName);
     }
-    profileName.style.marginBottom = "5px";
     row.appendChild(profileName);
 
     let profileText = document.createElement('div');
-    profileText.innerHTML = user.description + '<br/>';
-    profileText.style.marginBottom = "5px";
+    profileText.className = "profile-text";
+    profileText.innerHTML = user.description;
     row.appendChild(profileText);
 
     let followerInfo = document.createElement('div');
-    followerInfo.innerHTML = user.friendsCount + 'フォロー中 ' + user.followersCount + 'フォロワー<br/>';
+    followerInfo.className = "twitter-profile-card-footer";
+    followerInfo.innerHTML = `<span class="profile-count-text">${user.friendsCount.toLocaleString()}</span> フォロー中`
+        + `<span class="profile-count-text">${user.followersCount.toLocaleString()}</span> フォロワー`;
     row.appendChild(followerInfo);
     
     let btnbar = document.createElement('div');
@@ -222,27 +223,27 @@ function _displayTweets(tweets) {
     }).appendTo($(resultBox));
     {
         $('<button>', {
-            class: "btn btn-primary",
+            class: "btn btn-sm btn-sm btn-primary",
             onclick: "getRecentlyTweets(15)",
             text: "最近の15件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
-            class: "btn btn-primary",
+            class: "btn btn-sm btn-primary",
             onclick: "getRecentlyTweets(30)",
             text: "最近の30件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
-            class: "btn btn-primary",
+            class: "btn btn-sm btn-primary",
             onclick: "getRecentlyTweets(50)",
             text: "最近の50件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
-            class: "btn btn-primary",
+            class: "btn btn-sm btn-primary",
             onclick: "getRecentlyTweets(80)",
             text: "最近の80件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
-            class: "btn btn-primary",
+            class: "btn btn-sm btn-primary",
             onclick: "getRecentlyTweets()",
             text: "全件表示"
         }).appendTo("#btns-get-recently-tweets");
@@ -423,11 +424,13 @@ function drawChart(data, chartTargetEle) {
         dataTable.addColumn({ type: 'date', id: 'Date' });
         dataTable.addColumn({ type: 'number', id: 'Count' });
         dataTable.addRows(data);
+        let maxyear = Math.max(...data.map(p => new Date(p[0]).getFullYear()));
+        let minyear = Math.min(...data.map(p => new Date(p[0]).getFullYear()));
 
         // カレンダーの幅調整：https://stackoverflow.com/questions/61229240/how-to-make-google-calendar-chart-mobile-responsive
         var chartElement = document.getElementById('twitter_calendar');
         var cellSize = Math.max(1,((chartElement.offsetWidth*0.9)/52));
-        var years = 2;
+        var years = maxyear - minyear + 1;
         var chartHeight = (cellSize*7*years) + (4*years*cellSize);
     
         var chart = new google.visualization.Calendar(chartTargetEle);
