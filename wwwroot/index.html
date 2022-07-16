@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Twitter Research Tool</title>
     <link rel="stylesheet" href="css/site.css" />
     <link rel="stylesheet" href="css/bs_headers.css" />
@@ -29,10 +30,10 @@
     <main>
         <h1 class="visually-hidden">Twitter Research Tool</h1>
         <div class="container sticky-top" style="background-color: white;">
-            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <header class="d-flex flex-wrap align-items-center justify-content-between justify-content-md-between py-3 mb-4 border-bottom">
                 <a href="./index.html" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                    <img src="./image/icon_overbelief_green.svg" alt="overbelieficon" class="bi me-2" width="50" height="50">
-                    <span class="fs-4">Over Belief</span>
+                    <img src="./image/icon_overbelief_green.svg" alt="overbelieficon" class="bi me-2" width="40" height="40">
+                    <span class="fs-5">Over Belief</span>
                 </a>
 
                 <!--
@@ -51,11 +52,9 @@
                 </div>
 
                 <div class="d-flex align-items-center" id="login-user-memu" style="display: none;">
-                    <span class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" id="login-user-text"></span>
-        
-                    <div class="flex-shrink-0 dropdown" id="login-user-icon">
+                        <div class="flex-shrink-0 dropdown" id="login-user-icon">
                         <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="./image/icon_login_user.png" alt="mdo" width="32" height="32">
+                        <img src="./image/icon_login_user.png" alt="mdo" width="28" height="28">
                         </a>
                         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
                         <!--
@@ -76,7 +75,8 @@
         <div class="container" style="padding: 15px;">
             <div class="row">
                 <article class="mb-4">
-                <h3>Profile Banner Search</h3>
+                    <h3>プロフィールバナー検索</h3>
+                    <p>入力キーワードに紐づいたTwitterユーザーのプロフィールバナーを一覧で表示します。</p>
                     <form action="javascript:void(0);" method="POST" onsubmit="getTwitterUsersBySearchKeyWord()">
                         <input type="text" id="twitter-search-keyword" placeholder="ex ) Webマーケティング">
                         <input class="btn btn-primary" type="submit" value="キーワード検索">
@@ -85,7 +85,8 @@
             </div>
             <div class="row">
                 <article class="mb-4">
-                    <h3>Best Tweets</h3>
+                    <h3>いいねツイート検索</h3>
+                    <p>入力したTwitterユーザーの、過去約100件のツイートを「いいねが多い順」に表示します。</p>
                     <form action="javascript:void(0);" method="POST">
                         <input type="text" id="twitter-user-name" placeholder="ex ) OH1de">
                         <input class="btn btn-primary" type="submit" id="btn-get-tweet-by-user-name" value="ユーザー名検索">
