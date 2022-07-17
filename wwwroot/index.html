@@ -52,7 +52,13 @@
                 </div>
 
                 <div class="d-flex align-items-center" id="login-user-memu" style="display: none;">
-                        <div class="flex-shrink-0 dropdown" id="login-user-icon">
+                    <div id="loading">
+                        <div id="loading-icon" class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                    <span id="loading-text">Now loading...</span>
+                    <div class="flex-shrink-0 dropdown" id="login-user-icon">
                         <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="./image/icon_login_user.png" alt="mdo" width="28" height="28">
                         </a>
@@ -64,6 +70,7 @@
                         <li><hr class="dropdown-divider"></li>
                         -->
                         <li><a id="btn-show-favorite-tweet" class="dropdown-item" href="#Tweets">お気に入りツイート表示</a></li>
+                        <li><a id="btn-show-favorite-timeline" class="dropdown-item" href="#Tweets">お気に入りタイムライン表示</a></li>
                         <li><a id="btn-twitter-auth" class="dropdown-item" href="#TwitterAuth">Twitter認証</a></li>
                         <li><a class="dropdown-item" href="./api/auth/logout">ログアウト</a></li>
                         </ul>
@@ -85,8 +92,8 @@
             </div>
             <div class="row">
                 <article class="mb-4">
-                    <h3>いいねツイート検索</h3>
-                    <p>入力したTwitterユーザーの、過去約100件のツイートを「いいねが多い順」に表示します。</p>
+                    <h3>ベストツイート検索</h3>
+                    <p>入力したTwitterユーザーの、過去 約100件分のツイートを「いいねが多い順」に表示します。</p>
                     <form action="javascript:void(0);" method="POST">
                         <input type="text" id="twitter-user-name" placeholder="ex ) OH1de">
                         <input class="btn btn-primary" type="submit" id="btn-get-tweet-by-user-name" value="ユーザー名検索">

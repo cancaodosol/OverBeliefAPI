@@ -123,5 +123,15 @@ namespace OverBeliefApi.Controllers
             var tweets = await Task.Run(() => _twitterApplication.GetMostFavoritedTweets(userName, 150));
             return Ok(tweets.Select(x => new TwitterTweetApiDto(x)).ToArray());
         }
+
+        // GET: api/twitter/timeline_user/{{userName},{userName},{userName}}
+        [EnableCors("All")]
+        [HttpGet("timeline_user/{userNames}")]
+        public async Task<ActionResult<IEnumerable<TwitterTweetApiDto>>> GetTwtterTimeLineByUserNames(string userNames)
+        {
+            var targetUserNames = userNames.Split(',').Select(x => x.Trim()).ToArray();
+            var tweets = await Task.Run(() => _twitterApplication.GetTimelines(targetUserNames, 50));
+            return Ok(tweets.Select(x => new TwitterTweetApiDto(x)).ToArray());
+        }
     }
 }

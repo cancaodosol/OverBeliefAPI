@@ -88,6 +88,11 @@ async function getTweetByUserName(userName) {
     return await fetch(`${twitterApiUri}/tweet_best/${userName}`).then(response => response.json());
 }
 
+async function getTweetByUsersTimeline(userNames = []) {
+    joinedUserNames = userNames.join(",");
+    return await fetch(`${twitterApiUri}/timeline_user/${joinedUserNames}`).then(response => response.json());
+}
+
 function loginAuthorizeTwitter() {
     fetch(`${twitterApiUri}/login`, {
         method: 'POST',
@@ -129,6 +134,8 @@ function _createTwitterUserElement(user)
 {
     let row = document.createElement('div');
     row.className = "twitter-profile-card";
+    
+    if(!user) return row;
 
     let topbar = document.createElement('div');
     topbar.className = "twitter-profile-card-header";
@@ -177,6 +184,7 @@ function _createTwitterUserElement(user)
         btnAddFavorite.textContent = "お気に入り登録"
         btnAddFavorite.className = " btn btn-sm btn-outline-secondary";
         btnAddFavorite.onclick = () => {
+            showNowloading();
             const userEntity = {
                 "ownedUserId": loginUser.id,
                 "div": "F",
@@ -198,7 +206,7 @@ function _createTwitterUserElement(user)
     return row;
 }
 
-function _displayTweets(tweets) {
+function _displayTweets(tweets, mode="") {
     const resultBox = document.getElementById('twitter-search-results');
     resultBox.innerHTML = '';
 
@@ -209,14 +217,13 @@ function _displayTweets(tweets) {
     }
 
     const isUniUser = tweets[0].user != null;
-    if(isUniUser) resultBox.appendChild(_createTwitterUserElement(tweets[0].user));
+    let userProfile = _createTwitterUserElement(tweets[0].user ?? null);
+    resultBox.appendChild(userProfile);
 
     let tweetResultDaysEle = document.createElement('div');
-    {
-        tweetResultDaysEle.id = "twitter_calendar";
-        resultBox.appendChild(tweetResultDaysEle);
-        drawChart(summaryTweetsForChatData(tweets), tweetResultDaysEle);
-    }
+    tweetResultDaysEle.id = "twitter_calendar";
+    resultBox.appendChild(tweetResultDaysEle);
+    drawChart(summaryTweetsForChatData(tweets), tweetResultDaysEle);
 
     $('<div>', {
         id: 'btns-get-recently-tweets'
@@ -249,6 +256,28 @@ function _displayTweets(tweets) {
         }).appendTo("#btns-get-recently-tweets");
     }
 
+    let tweetMenu = document.createElement('div');
+    tweetMenu.id = "twitter-menu";
+    let btnSortCreateAt = document.createElement('button');
+    btnSortCreateAt.textContent = "投稿順で表示"
+    btnSortCreateAt.className = "btn btn-sm btn-outline-secondary";
+    btnSortCreateAt.onclick = () => {
+        getTweetsSortedByCreateAt();
+    };
+    tweetMenu.appendChild(btnSortCreateAt);
+    resultBox.appendChild(tweetMenu);
+    
+    switch(mode){
+        case "MyTimeline" :
+            userProfile.style.display = "none";
+            tweetResultDaysEle.style.display = "none";
+            $("#btns-get-recently-tweets").hide();
+            btnSortCreateAt.style.display = "none";
+            break;
+        default :
+            break;
+    }
+
     tweets.forEach(tweet => {
         let row = document.createElement('div');
         row.id = `tweet_id_${tweet.id}`;
@@ -256,7 +285,12 @@ function _displayTweets(tweets) {
 
         let topbar = document.createElement('div');
         topbar.className = "tweet-card-header";
-        if(!isUniUser) topbar.innerHTML =  `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
+        {
+            let tweetedUserName = document.createElement('span');
+            tweetedUserName.innerHTML =  isUniUser ? `<strong>[ ${tweet.user.name}@${tweet.user.screenName} ]</strong>` : 
+                `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
+            topbar.appendChild(tweetedUserName);
+        }
         row.appendChild(topbar);
 
         let tweetText = document.createElement('div');
@@ -300,6 +334,7 @@ function _displayTweets(tweets) {
             btnAddFavorite.textContent = "お気に入り登録"
             btnAddFavorite.className = " btn btn-sm btn-outline-secondary";
             btnAddFavorite.onclick = () => {
+                showNowloading();
                 const tweetEntity = {
                     "ownedUserId": loginUser.id,
                     "div": "F",
@@ -316,6 +351,7 @@ function _displayTweets(tweets) {
                     "tweetedUserScreenName": tweet.user.screenName
                 }
                 addMyFavoriteTwitterTweet(tweetEntity);
+                hideNowloading(true);
             };
             btnbar.appendChild(btnAddFavorite);
         
@@ -330,15 +366,22 @@ function _displayTweets(tweets) {
                 if(thisTextEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
 
                 if(!isEditMode){
-                    thisTextEle.innerHTML = '<textarea rows="8" cols="60">' + thisTextEle.innerText + '</textarea>';
-                    thisTagsEle.innerHTML = '<textarea rows="1" cols="60">' + (tweet.tag ? tweet.tag : '') + '</textarea>';
+                    thisTextEle.innerHTML = '<textarea rows="8">' + thisTextEle.innerText + '</textarea>';
+                    thisTagsEle.innerHTML = '<textarea rows="1">' + (tweet.tag ? tweet.tag : '') + '</textarea>';
                     thisTagsEle.classList.add("input-mode");
                     btnToggleEditMode.textContent = "保存";
                 }else{
-                    tweet.text = thisTextEle.firstElementChild.value;
-                    tweet.tag = thisTagsEle.firstElementChild.value;
+                    let isChangedValue = false;
+                    if(tweet.text !== thisTextEle.firstElementChild.value)isChangedValue = true;
+                    if(tweet.tag !== thisTagsEle.firstElementChild.value)isChangedValue = true;
 
-                    let ret = editMyFavoriteTwitterTweet(tweet);
+                    if(isChangedValue === true){
+                        showNowloading();
+                        tweet.text = thisTextEle.firstElementChild.value;
+                        tweet.tag = thisTagsEle.firstElementChild.value;
+                        let ret = editMyFavoriteTwitterTweet(tweet);
+                        hideNowloading(true);
+                    }
 
                     thisTextEle.innerHTML = tweet.text;
                     thisTagsEle.classList.remove("input-mode");
@@ -363,9 +406,11 @@ function _displayTweets(tweets) {
                 btnGetBestTweet.textContent = "BestTweet検索"
                 btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
                 btnGetBestTweet.onclick = async () => {
+                    showNowloading();
                     const screenName = tweet.tweetedUserScreenName;
                     const tweets = await getTweetByUserName(screenName);
                     _displayTweets(tweets);
+                    hideNowloading(true);
                 };
                 btnbar.appendChild(btnGetBestTweet);
             }
@@ -390,6 +435,17 @@ function getRecentlyTweets(tweetCount) {
         return -1;
     });
     _displayTweets(recentlyTweets);
+    twitterTweets = tmpTwitterTweets;
+}
+
+function getTweetsSortedByCreateAt(isupper=true) {
+    let tmpTwitterTweets = twitterTweets.slice(0, twitterTweets.length);
+    tmpTwitterTweets.sort((a, b) => {
+        if(a.createdAt < b.createdAt) return 1;
+        return -1;
+    });
+    if(!isupper) tmpTwitterTweets = tmpTwitterTweets.reverse();
+    _displayTweets(tmpTwitterTweets);
     twitterTweets = tmpTwitterTweets;
 }
 

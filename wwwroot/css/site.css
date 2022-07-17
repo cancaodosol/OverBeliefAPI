@@ -6,6 +6,16 @@
     display: none;
 }
 
+#loading {
+    display: none;
+    margin: 0px 5px 0px 0px;
+}
+
+#loading-text {
+    display: none;
+    margin: 0px 20px 0px 5px;
+}
+
 table {
     font-family: Arial, sans-serif;
     border: 1px solid;
@@ -70,10 +80,14 @@ td {
     margin-left: 5px;
 }
 
+.tweet-card textarea{
+    width: 100%;
+    max-width: 550px;
+}
+
 .tweet-card .tweet-tag-box {
     text-align: right;
     padding-left: 5px;
-    padding-right: 10px;
 }
 
 .tweet-card .tweet-tag-box.input-mode{

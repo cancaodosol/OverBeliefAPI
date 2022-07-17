@@ -1,6 +1,31 @@
 const myFavoriteTwitterUserIds = []; // {id:"", name:"", iconUri:""}
 let userLogined = false;
 
+function showNowloading(text="") {
+    let loading = document.getElementById("loading");
+    let loadingText = document.getElementById("loading-text");
+    loadingText.className = "text-dark";
+    loading.style.display = "block";
+    loadingText.style.display = "block";
+    if(!text) text = "Now Loading...";
+    loadingText.innerHTML = text;
+}
+
+function hideNowloading(isSuccess=true, text="") {
+    let loading = document.getElementById("loading");
+    let loadingText = document.getElementById("loading-text");
+    if(!text) text = isSuccess ? "Success." : "Error.";
+    setTimeout(() => {
+        loading.style.display = "none";
+        loadingText.className = isSuccess ? "text-primary" : "text-danger";
+        loadingText.innerHTML = text;
+        setTimeout(() => {
+            loadingText.style.display = "none";
+            loadingText.style.color = "";
+        }, 500);
+    }, 500);
+}
+
 function addMyFavoriteUserIds(user={id:"", name:"", iconUri:""}) {
     if(typeof(user.id) !== "string") return;
     if(typeof(user.name) !== "string") return;
@@ -21,10 +46,12 @@ function refreshMyFavoriteTweetsBox() {
     });
 
     $(".btn-get-tweets").on('click', async (e) => {
+        showNowloading();
         const userName = e.target.dataset.id;
         $("#twitter-user-name").val(userName);
         const tweets = await getTweetByUserName(userName);
         _displayTweets(tweets);
+        hideNowloading();
     });
 }
 
@@ -40,6 +67,7 @@ function getParam(name, url) {
 }
 
 async function ini() {
+    showNowloading();
 
     // ログインメニュー制御
     const pscd = getParam('pscd') || "";
@@ -87,15 +115,29 @@ async function ini() {
 
     // 画面イベント
     $("#btn-get-tweet-by-user-name").on('click', async () => {
+        showNowloading();
         const userName = $("#twitter-user-name").val();
         const tweets = await getTweetByUserName(userName);
         _displayTweets(tweets);
+        hideNowloading(true);
     });
     
     $("#btn-show-favorite-tweet").on('click', async () => {
+        showNowloading();
         const tweets = await getMyFavoriteTwitterTweet();
         _displayTweets(tweets);
+        hideNowloading(true);
     });
+
+    $("#btn-show-favorite-timeline").on('click', async () => {
+        showNowloading();
+        let usernames = myFavoriteTwitterUserIds.map(x => x.id)
+        const tweets = await getTweetByUsersTimeline(usernames);
+        _displayTweets(tweets, "MyTimeline");
+        hideNowloading(true);
+    });
+
+    hideNowloading(true);
 }
 
 ini();
