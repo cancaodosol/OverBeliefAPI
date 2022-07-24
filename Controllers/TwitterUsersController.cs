@@ -99,7 +99,7 @@ namespace OverBeliefApi.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetTwitterUserEntity", new { id = twitterUserEntity.Id }, twitterUserEntity);
         }
 
         // POST: api/TwitterUsers
