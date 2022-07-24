@@ -4,7 +4,7 @@ const authApiUri = 'https://h1deblog.com/overbeliefapi/api/auth';
 function toErrorObj(error=new Error(), id="", code="999") {
     console.error(error);
     let message = "システムの内部エラーが発生しました。";
-    let tip = "申し訳ございませんが、開発者へお問い合わせください。";
+    let tip = "申し訳ございませんが、<a href='https://forms.gle/7UPTmnXV8drrttCWA' class='alert-link'>開発者へお問い合わせ</a>ください。";
     return { 
         isError : true,
         message : message,
