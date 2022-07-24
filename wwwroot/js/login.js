@@ -15,11 +15,19 @@ function toErrorObj(error=new Error(), id="", code="999") {
 }
 
 async function getLoginUser(pscd="") {
+    let url="";
     if(!pscd || pscd.trim() === ""){
-        return await fetch(`${authApiUri}`).then(response => response.json());
+        url = `${authApiUri}`;
     }else{
-        return await fetch(`${authApiUri}?pscd=${pscd}`).then(response => response.json());
+        url = `${authApiUri}?pscd=${pscd}`;
     }
+    const ret = await fetch(url).then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
+    return ret;
 }
 
 async function tryLoginUser(user){

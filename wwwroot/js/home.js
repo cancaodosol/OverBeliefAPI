@@ -26,6 +26,8 @@ function hideNowloading(isSuccess=true, text="") {
     }, 500);
 }
 const alertMessageEle = {
+    // ページトップ
+    TOP : document.getElementById("pagetop-alert"),
     // プロフィールバナー検索
     PBR : document.getElementById("profile-banner-alert"),
     // ベストツイート検索
@@ -98,6 +100,12 @@ async function ini() {
     // ログインメニュー制御
     const pscd = getParam('pscd') || "";
     const retLoginUser = await getLoginUser(pscd);
+    if(retLoginUser.isError)
+    {
+        alertMessage("TOP", retLoginUser.message, retLoginUser.tip);
+        hideNowloading(false);
+        return;
+    }
 
     if(retLoginUser.hasLogined === true){
         userLogined = true;
@@ -124,9 +132,8 @@ async function ini() {
         if(userLogined){
             const users = await getMyFavoriteTwitterUsers();
             if(users.isError){
-                window.alert(users.message + "\n\n" + users.tip);
-                hideNowloading(false);
-                return;
+                console.error(users);
+                users = [];
             }
             users.forEach(user => {
                 addMyFavoriteUserIds({
