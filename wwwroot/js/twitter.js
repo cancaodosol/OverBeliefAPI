@@ -476,7 +476,7 @@ function _displayTweets(tweets, mode="") {
             btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
             btnGetBestTweet.onclick = async () => {
                 showNowloading();
-                const screenName = tweet.tweetedUserScreenName;
+                const screenName = tweet.user ? tweet.user.screenName : tweet.tweetedUserScreenName;
                 const tweets = await getTweetByUserName(screenName);
                 _displayTweets(tweets, _mode.BTR);
                 hideNowloading(true);
