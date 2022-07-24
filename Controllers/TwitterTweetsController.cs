@@ -108,7 +108,7 @@ namespace OverBeliefApi.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetTwitterTweetEntity", new { id = twitterTweetEntity.Id }, twitterTweetEntity);
         }
 
         // POST: api/TwitterTweets

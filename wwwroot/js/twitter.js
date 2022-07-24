@@ -81,8 +81,8 @@ async function getMyFavoriteTwitterTweet() {
     .catch(error => toErrorObj(error));
 }
 
-function addMyFavoriteTwitterTweet(tweetEntity) {
-    fetch(`${twitterApiUri}/tweets`, {
+async function addMyFavoriteTwitterTweet(tweetEntity) {
+    const ret = await fetch(`${twitterApiUri}/tweets`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -95,15 +95,14 @@ function addMyFavoriteTwitterTweet(tweetEntity) {
             throw new Error(response.status + " : " + response.statusText);
         }
         return response.json();})
-    .then(data => {
-        if(!data.id){window.alert(`ツイートの登録が失敗しました。`); return;}
-        window.alert(`ツイートの登録が完了しました。`);
-    })
     .catch(error => toErrorObj(error));
+
+    if(ret.isError) return ret;
+    return { isError : (!ret.id), message: ret.id ? "登録成功" : "登録失敗"};
 }
 
-function editMyFavoriteTwitterTweet(tweetEntity) {
-    fetch(`${twitterApiUri}/tweets/${tweetEntity.id}`, {
+async function editMyFavoriteTwitterTweet(tweetEntity) {
+    const ret = await fetch(`${twitterApiUri}/tweets/${tweetEntity.id}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -116,11 +115,10 @@ function editMyFavoriteTwitterTweet(tweetEntity) {
             throw new Error(response.status + " : " + response.statusText);
         }
         return response.json();})
-    .then(data => {
-        if(!data.id){window.alert(`ツイートの更新が失敗しました。`); return;}
-        window.alert(`ツイートの更新が完了しました。`);
-    })
     .catch(error => toErrorObj(error));
+
+    if(ret.isError) return ret;
+    return { isError : (!ret.id), message: ret.id ? "保存成功" : "保存失敗"};
 }
 
 function getTwitterUsersBySearchKeyWord() {
@@ -406,7 +404,7 @@ function _displayTweets(tweets, mode="") {
             btnAddFavorite.appendChild(_iconbase);
             btnAddFavorite.textContent = "お気に入り登録"
             btnAddFavorite.className = " btn btn-sm btn-outline-secondary";
-            btnAddFavorite.onclick = () => {
+            btnAddFavorite.onclick = async () => {
                 showNowloading();
                 const tweetEntity = {
                     "ownedUserId": loginUser.id,
@@ -423,14 +421,15 @@ function _displayTweets(tweets, mode="") {
                     "tweetedUserName": tweet.user.name,
                     "tweetedUserScreenName": tweet.user.screenName
                 }
-                addMyFavoriteTwitterTweet(tweetEntity);
-                hideNowloading(true);
+                let ret = addMyFavoriteTwitterTweet(tweetEntity);
+                let message = !ret.isError ? "登録完了" : "登録失敗";
+                hideNowloading(!ret.isError, message);
             };
         
             let btnToggleEditMode = document.createElement('button');
             btnToggleEditMode.textContent = "編集"
             btnToggleEditMode.className = " btn btn-sm btn-outline-secondary";
-            btnToggleEditMode.onclick = () => {
+            btnToggleEditMode.onclick = async () => {
                 const thisTextEle = document.getElementById(`tweet-text-${tweet.id}`);
                 const thisTagsEle = document.getElementById(`tweet-tag-${tweet.id}`);
 
@@ -451,8 +450,9 @@ function _displayTweets(tweets, mode="") {
                         showNowloading();
                         tweet.text = thisTextEle.firstElementChild.value;
                         tweet.tag = thisTagsEle.firstElementChild.value;
-                        let ret = editMyFavoriteTwitterTweet(tweet);
-                        hideNowloading(true);
+                        let ret = await editMyFavoriteTwitterTweet(tweet);
+                        let message = !ret.isError ? "保存完了" : "保存失敗";
+                        hideNowloading(!ret.isError, message);
                     }
 
                     thisTextEle.innerHTML = tweet.text;
