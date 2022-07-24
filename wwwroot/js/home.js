@@ -130,7 +130,7 @@ async function ini() {
     }).appendTo("#my-favorite-tweets-box");
     {
         if(userLogined){
-            const users = await getMyFavoriteTwitterUsers();
+            let users = await getMyFavoriteTwitterUsers();
             if(users.isError){
                 console.error(users);
                 users = [];
