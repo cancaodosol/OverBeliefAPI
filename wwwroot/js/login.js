@@ -1,6 +1,19 @@
 // const authApiUri = 'https://localhost:7233/api/auth';
 const authApiUri = 'https://h1deblog.com/overbeliefapi/api/auth';
 
+function toErrorObj(error=new Error(), id="", code="999") {
+    console.error(error);
+    let message = "システムの内部エラーが発生しました。";
+    let tip = "申し訳ございませんが、開発者へお問い合わせください。";
+    return { 
+        isError : true,
+        message : message,
+        tip : tip,
+        id : id,
+        code : code,
+    };
+}
+
 async function getLoginUser(pscd="") {
     if(!pscd || pscd.trim() === ""){
         return await fetch(`${authApiUri}`).then(response => response.json());
@@ -17,7 +30,13 @@ async function tryLoginUser(user){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(user)
-    }).then(response => response.json());
+    })
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
     
     if(result.url){ window.location.assign(result.url); return true;}
     else{ return false;}
@@ -43,7 +62,13 @@ async function trySignUpUser(user){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(user)
-    }).then(response => response.json());
+    })
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
     
     if(result.url){ return { "ok": true, "url" : result.url}; }
     else{ return { "ok": false, "message": "既に使用されているメールアドレスです。"};}

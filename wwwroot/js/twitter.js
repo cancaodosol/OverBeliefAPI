@@ -8,6 +8,16 @@ const loginUser = {
     id : -1,
     name : "",
 }
+const _mode = {
+    // プロフィールバナー検索
+    PBR : "PBR",
+    // ベストツイート検索
+    BTR : "BTR",
+    // お気に入りツイート一覧
+    MFT : "MFT",
+    // マイタイムライン
+    MTL : " MTL"
+};
 
 function toErrorObj(error=new Error(), id="", code="999") {
     console.error(error);
@@ -29,7 +39,13 @@ function setLoginUser(id="", name="", haslogined=false) {
 }
 
 async function getMyFavoriteTwitterUsers() {
-    return await fetch(`${twitterApiUri}/users`).then(response => response.json());
+    return await fetch(`${twitterApiUri}/users`)
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
 }
 
 function addMyFavoriteTwitterUsers(twitterUserEntity) {
@@ -41,18 +57,28 @@ function addMyFavoriteTwitterUsers(twitterUserEntity) {
         },
         body: JSON.stringify(twitterUserEntity)
     })
-        .then(response => response.json())
-        .then(data => {
-            if(!data.id){window.alert(`【${twitterUserEntity.name}】の登録が失敗しました。`); return;}
-            window.alert(`【${data.name}】の登録が完了しました。`);
-            addMyFavoriteUserIds({id:data.screenName, name:data.name, iconUri:data.profileImageUrl});
-            refreshMyFavoriteTweetsBox();
-        })
-        .catch(error => console.error('Unable to add twitterUserEntity.', error));
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .then(data => {
+        if(!data.id){window.alert(`【${twitterUserEntity.name}】の登録が失敗しました。`); return;}
+        window.alert(`【${data.name}】の登録が完了しました。`);
+        addMyFavoriteUserIds({id:data.screenName, name:data.name, iconUri:data.profileImageUrl});
+        refreshMyFavoriteTweetsBox();
+    })
+    .catch(error => toErrorObj(error));
 }
 
 async function getMyFavoriteTwitterTweet() {
-    return await fetch(`${twitterApiUri}/tweets`).then(response => response.json());
+    return await fetch(`${twitterApiUri}/tweets`)
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
 }
 
 function addMyFavoriteTwitterTweet(tweetEntity) {
@@ -64,12 +90,16 @@ function addMyFavoriteTwitterTweet(tweetEntity) {
         },
         body: JSON.stringify(tweetEntity)
     })
-        .then(response => response.json())
-        .then(data => {
-            if(!data.id){window.alert(`ツイートの登録が失敗しました。`); return;}
-            window.alert(`ツイートの登録が完了しました。`);
-        })
-        .catch(error => console.error('Unable to add twitterUserEntity.', error));
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .then(data => {
+        if(!data.id){window.alert(`ツイートの登録が失敗しました。`); return;}
+        window.alert(`ツイートの登録が完了しました。`);
+    })
+    .catch(error => toErrorObj(error));
 }
 
 function editMyFavoriteTwitterTweet(tweetEntity) {
@@ -81,20 +111,28 @@ function editMyFavoriteTwitterTweet(tweetEntity) {
         },
         body: JSON.stringify(tweetEntity)
     })
-        .then(response => response.json())
-        .then(data => {
-            if(!data.id){window.alert(`ツイートの更新が失敗しました。`); return;}
-            window.alert(`ツイートの更新が完了しました。`);
-        })
-        .catch(error => console.error('Unable to add twitterUserEntity.', error));
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .then(data => {
+        if(!data.id){window.alert(`ツイートの更新が失敗しました。`); return;}
+        window.alert(`ツイートの更新が完了しました。`);
+    })
+    .catch(error => toErrorObj(error));
 }
 
 function getTwitterUsersBySearchKeyWord() {
     const searchKeyWord = document.getElementById('twitter-search-keyword').value;
     fetch(`${twitterApiUri}/user_search/${searchKeyWord}`)
-        .then(response => response.json())
-        .then(data => _displayTwitterUsers(data))
-        .catch(error => console.error('Unable to get items.', error));
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .then(data => _displayTwitterUsers(data))
+    .catch(error => toErrorObj(error));
 }
 
 async function getTweetByUserName(userName) {
@@ -105,7 +143,13 @@ async function getTweetByUserName(userName) {
 
 async function getTweetByUsersTimeline(userNames = []) {
     joinedUserNames = userNames.join(",");
-    return await fetch(`${twitterApiUri}/timeline_user/${joinedUserNames}`).then(response => response.json());
+    return await fetch(`${twitterApiUri}/timeline_user/${joinedUserNames}`)
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
 }
 
 function loginAuthorizeTwitter() {
@@ -116,9 +160,13 @@ function loginAuthorizeTwitter() {
             'Content-Type': 'application/json'
         }
     })
-        .then(response => response.json())
-        .then(data => {if(data.url) window.location.assign(data.url);})
-        .catch(error => console.error('Unable to get items.', error));
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .then(data => {if(data.url) window.location.assign(data.url);})
+    .catch(error => toErrorObj(error));
 }
 
 const _iconbase = document.createElement("i");
@@ -231,7 +279,6 @@ function _displayTweets(tweets, mode="") {
         return;
     }
 
-    const isUniUser = tweets[0].user != null;
     let userProfile = _createTwitterUserElement(tweets[0].user ?? null);
     resultBox.appendChild(userProfile);
 
@@ -246,27 +293,27 @@ function _displayTweets(tweets, mode="") {
     {
         $('<button>', {
             class: "btn btn-sm btn-sm btn-primary",
-            onclick: "getRecentlyTweets(15)",
+            onclick: "getRecentlyTweets(15, '"+ mode +"')",
             text: "最近の15件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
             class: "btn btn-sm btn-primary",
-            onclick: "getRecentlyTweets(30)",
+            onclick: "getRecentlyTweets(30, '"+ mode +"')",
             text: "最近の30件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
             class: "btn btn-sm btn-primary",
-            onclick: "getRecentlyTweets(50)",
+            onclick: "getRecentlyTweets(50, '"+ mode +"')",
             text: "最近の50件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
             class: "btn btn-sm btn-primary",
-            onclick: "getRecentlyTweets(80)",
+            onclick: "getRecentlyTweets(80, '"+ mode +"')",
             text: "最近の80件"
         }).appendTo("#btns-get-recently-tweets");
         $('<button>', {
             class: "btn btn-sm btn-primary",
-            onclick: "getRecentlyTweets()",
+            onclick: "getRecentlyTweets(, '"+ mode +"')",
             text: "全件表示"
         }).appendTo("#btns-get-recently-tweets");
     }
@@ -277,22 +324,30 @@ function _displayTweets(tweets, mode="") {
     btnSortCreateAt.textContent = "投稿順で表示"
     btnSortCreateAt.className = "btn btn-sm btn-outline-secondary";
     btnSortCreateAt.onclick = () => {
-        getTweetsSortedByCreateAt();
+        const sortedTweets = getTweetsSortedByCreateAt();
+        _displayTweets(sortedTweets, mode);
     };
     tweetMenu.appendChild(btnSortCreateAt);
     resultBox.appendChild(tweetMenu);
     
     switch(mode){
-        case "MyTimeline" :
+        case _mode.BTR:
+            break;
+        case _mode.MFT:
+            userProfile.style.display = "none";
+            $("#btns-get-recently-tweets").hide();
+            break;
+        case _mode.MTL:
             userProfile.style.display = "none";
             tweetResultDaysEle.style.display = "none";
             $("#btns-get-recently-tweets").hide();
             btnSortCreateAt.style.display = "none";
             break;
-        default :
+        default:
             break;
     }
 
+    const shouldShowUserName = ( mode === _mode.MFT || mode === _mode.MTL ); 
     tweets.forEach(tweet => {
         let row = document.createElement('div');
         row.id = `tweet_id_${tweet.id}`;
@@ -301,10 +356,13 @@ function _displayTweets(tweets, mode="") {
         let topbar = document.createElement('div');
         topbar.className = "tweet-card-header";
         {
-            let tweetedUserName = document.createElement('span');
-            tweetedUserName.innerHTML =  isUniUser ? `<strong>[ ${tweet.user.name}@${tweet.user.screenName} ]</strong>` : 
-                `<strong>[ ${tweet.tweetedUserName}@${tweet.tweetedUserScreenName} ]</strong>`;
-            topbar.appendChild(tweetedUserName);
+            if(shouldShowUserName === true)
+            {
+                let tweetedUserName = document.createElement('span');
+                let userNameLabel = tweet.user ? `${tweet.user.name}@${tweet.user.screenName}` : `${tweet.tweetedUserName}@${tweet.tweetedUserScreenName}`;
+                tweetedUserName.innerHTML = `<strong>[ ${userNameLabel} ]</strong>`;
+                topbar.appendChild(tweetedUserName);
+            }
         }
         row.appendChild(topbar);
 
@@ -368,7 +426,6 @@ function _displayTweets(tweets, mode="") {
                 addMyFavoriteTwitterTweet(tweetEntity);
                 hideNowloading(true);
             };
-            btnbar.appendChild(btnAddFavorite);
         
             let btnToggleEditMode = document.createElement('button');
             btnToggleEditMode.textContent = "編集"
@@ -413,21 +470,32 @@ function _displayTweets(tweets, mode="") {
                     btnToggleEditMode.textContent = "編集";
                 }
             };
-            btnbar.appendChild(btnToggleEditMode);
-        
-            if(!isUniUser)
-            {
-                let btnGetBestTweet = document.createElement('button');
-                btnGetBestTweet.textContent = "BestTweet検索"
-                btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
-                btnGetBestTweet.onclick = async () => {
-                    showNowloading();
-                    const screenName = tweet.tweetedUserScreenName;
-                    const tweets = await getTweetByUserName(screenName);
-                    _displayTweets(tweets);
-                    hideNowloading(true);
-                };
-                btnbar.appendChild(btnGetBestTweet);
+
+            let btnGetBestTweet = document.createElement('button');
+            btnGetBestTweet.textContent = "BestTweet検索"
+            btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
+            btnGetBestTweet.onclick = async () => {
+                showNowloading();
+                const screenName = tweet.tweetedUserScreenName;
+                const tweets = await getTweetByUserName(screenName);
+                _displayTweets(tweets, _mode.BTR);
+                hideNowloading(true);
+            };
+
+            switch(mode){
+                case _mode.BTR:
+                    btnbar.appendChild(btnAddFavorite);
+                    break;
+                case _mode.MFT:
+                    btnbar.appendChild(btnToggleEditMode);
+                    btnbar.appendChild(btnGetBestTweet);
+                    break;
+                case _mode.MTL:
+                    btnbar.appendChild(btnAddFavorite);
+                    btnbar.appendChild(btnGetBestTweet);
+                    break;
+                default:
+                    break;
             }
         }
         row.appendChild(btnbar);
@@ -438,7 +506,7 @@ function _displayTweets(tweets, mode="") {
     twitterTweets = tweets;
 }
 
-function getRecentlyTweets(tweetCount) {
+function getRecentlyTweets(tweetCount, mode) {
     let tmpTwitterTweets = twitterTweets.slice(0, twitterTweets.length);
     tmpTwitterTweets.sort((a, b) => {
         if(a.createdAt < b.createdAt) return 1;
@@ -449,7 +517,7 @@ function getRecentlyTweets(tweetCount) {
         if(a.favoriteCount < b.favoriteCount) return 1;
         return -1;
     });
-    _displayTweets(recentlyTweets);
+    _displayTweets(recentlyTweets, mode);
     twitterTweets = tmpTwitterTweets;
 }
 
@@ -460,8 +528,7 @@ function getTweetsSortedByCreateAt(isupper=true) {
         return -1;
     });
     if(!isupper) tmpTwitterTweets = tmpTwitterTweets.reverse();
-    _displayTweets(tmpTwitterTweets);
-    twitterTweets = tmpTwitterTweets;
+    return tmpTwitterTweets; 
 }
 
 function summaryTweetsForChatData(tweets){

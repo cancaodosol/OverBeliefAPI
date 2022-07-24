@@ -76,7 +76,7 @@ function refreshMyFavoriteTweetsBox() {
             hideNowloading(false);
             return;
         }
-        _displayTweets(tweets);
+        _displayTweets(tweets, _mode.BTR);
         hideNowloading();
     });
 }
@@ -123,6 +123,11 @@ async function ini() {
     {
         if(userLogined){
             const users = await getMyFavoriteTwitterUsers();
+            if(users.isError){
+                window.alert(users.message + "\n\n" + users.tip);
+                hideNowloading(false);
+                return;
+            }
             users.forEach(user => {
                 addMyFavoriteUserIds({
                         id: user.screenName,
@@ -136,7 +141,7 @@ async function ini() {
 
     if(userLogined){
         const tweets = await getMyFavoriteTwitterTweet();
-        if(tweets.length > 0) _displayTweets(tweets);
+        if(tweets.length > 0) _displayTweets(tweets, _mode.MFT);
     }
 
     // 画面イベント
@@ -150,22 +155,22 @@ async function ini() {
             hideNowloading(false);
             return;
         }
-        _displayTweets(tweets);
+        _displayTweets(tweets, _mode.BTR);
         hideNowloading(true);
     });
     
     $("#btn-show-favorite-tweet").on('click', async () => {
         showNowloading();
         const tweets = await getMyFavoriteTwitterTweet();
-        _displayTweets(tweets);
+        _displayTweets(tweets, _mode.MFT);
         hideNowloading(true);
     });
 
     $("#btn-show-favorite-timeline").on('click', async () => {
         showNowloading();
-        let usernames = myFavoriteTwitterUserIds.map(x => x.id)
+        let usernames = myFavoriteTwitterUserIds.map(x => x.id);
         const tweets = await getTweetByUsersTimeline(usernames);
-        _displayTweets(tweets, "MyTimeline");
+        _displayTweets(tweets, _mode.MTL);
         hideNowloading(true);
     });
 
