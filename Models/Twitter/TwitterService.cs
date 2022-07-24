@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace OverBeliefApi.Models.Twitter
@@ -163,10 +164,21 @@ namespace OverBeliefApi.Models.Twitter
 
             foreach (var name in memberNames)
             {
-                var tweets = this.Tokens.Statuses.UserTimeline(count: count, screen_name: name);
-                foreach (var tweet in tweets)
+                if (!IsScreenName(name)) continue;
+                try 
                 {
-                    result.Add(tweet);
+                    var tweets = this.Tokens.Statuses.UserTimeline(count: count, screen_name: name);
+                    foreach (var tweet in tweets)
+                    {
+                        result.Add(tweet);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error : " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " GetTweetsByUserScreenNames Name="+ name + ".");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToString());
+                    continue;
                 }
             }
 
@@ -182,6 +194,11 @@ namespace OverBeliefApi.Models.Twitter
         public List<Status> GetSearchTweets(string searchText, int count)
         {
             return this.Tokens.Search.Tweets(count: count, q: searchText).ToList();
+        }
+
+        public bool IsScreenName(string name) 
+        {
+            return Regex.IsMatch(name, @"^[0-9a-zA-Z@_]+$");
         }
     }
 }

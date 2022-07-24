@@ -16,6 +16,14 @@
     margin: 0px 20px 0px 5px;
 }
 
+#profile-banner-alert {
+    margin-top: 10px;
+}
+
+#best-tweet-alert {
+    margin-top: 10px;
+}
+
 table {
     font-family: Arial, sans-serif;
     border: 1px solid;

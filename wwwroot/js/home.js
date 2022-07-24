@@ -25,6 +25,26 @@ function hideNowloading(isSuccess=true, text="") {
         }, 500);
     }, 500);
 }
+const alertMessageEle = {
+    // プロフィールバナー検索
+    PBR : document.getElementById("profile-banner-alert"),
+    // ベストツイート検索
+    BTR : document.getElementById("best-tweet-alert")
+}
+
+function alertMessage(mode="", message="", tip="") {
+    let messageHTML = "";
+    messageHTML += '<h4 class="alert-heading">エラー</h4>';
+    messageHTML += `<p>${message}</p>`;
+    if(tip) messageHTML += `<hr><p class="mb-0">${tip.replaceAll('\n', '<br>')}</p>`;
+
+    alertMessageEle[mode].innerHTML = messageHTML;
+    alertMessageEle[mode].style.display = "block";
+}
+
+function closeAlertMessage(mode="") {
+    alertMessageEle[mode].style.display = "none";
+}
 
 function addMyFavoriteUserIds(user={id:"", name:"", iconUri:""}) {
     if(typeof(user.id) !== "string") return;
@@ -47,9 +67,15 @@ function refreshMyFavoriteTweetsBox() {
 
     $(".btn-get-tweets").on('click', async (e) => {
         showNowloading();
+        closeAlertMessage("BTR");
         const userName = e.target.dataset.id;
         $("#twitter-user-name").val(userName);
         const tweets = await getTweetByUserName(userName);
+        if(tweets.isError){
+            alertMessage("BTR", tweets.message, tweets.tip);
+            hideNowloading(false);
+            return;
+        }
         _displayTweets(tweets);
         hideNowloading();
     });
@@ -116,8 +142,14 @@ async function ini() {
     // 画面イベント
     $("#btn-get-tweet-by-user-name").on('click', async () => {
         showNowloading();
+        closeAlertMessage("BTR");
         const userName = $("#twitter-user-name").val();
         const tweets = await getTweetByUserName(userName);
+        if(tweets.isError){
+            alertMessage("BTR", tweets.message, tweets.tip);
+            hideNowloading(false);
+            return;
+        }
         _displayTweets(tweets);
         hideNowloading(true);
     });

@@ -53,7 +53,7 @@ namespace OverBeliefApi.Controllers
             return Ok(new { url=OAuthSession.AuthorizeUri.OriginalString });
         }
 
-        public class TwitterCallbackParameters: LoginParameters
+        public class TwitterCallbackParameters : LoginParameters
         {
             [FromQuery(Name = "oauth_token")]
             public string? oauth_token { get; set; }
@@ -120,7 +120,16 @@ namespace OverBeliefApi.Controllers
         [HttpGet("tweet_best/{userName}")]
         public async Task<ActionResult<IEnumerable<TwitterTweetApiDto>>> GetTweetsByUserName(string userName)
         {
-            var tweets = await Task.Run(() => _twitterApplication.GetMostFavoritedTweets(userName, 150));
+            var tweets = await Task.Run(() => _twitterApplication.GetMostFavoritedTweets(userName.Trim(), 150));
+            if (tweets == null || tweets.Count == 0)
+            {
+                var message = "検索結果が、0件でした。";
+                var tip = "入力したTwitterユーザー名に問題がないか確認してください。\n";
+                tip += "※Twitterのユーザー名は「@」を先頭に、英数字とアンダースコア「_」で構成された名前です。\n";
+                tip += "\n";
+                tip += "また、鍵垢などの場合は、正しくても0件となることがあります。";
+                return NotFound(new ErrorMsgDto(message, tip));
+            }
             return Ok(tweets.Select(x => new TwitterTweetApiDto(x)).ToArray());
         }
 

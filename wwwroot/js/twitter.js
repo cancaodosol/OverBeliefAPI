@@ -9,6 +9,19 @@ const loginUser = {
     name : "",
 }
 
+function toErrorObj(error=new Error(), id="", code="999") {
+    console.error(error);
+    let message = "システムの内部エラーが発生しました。";
+    let tip = "申し訳ございませんが、開発者へお問い合わせください。";
+    return { 
+        isError : true,
+        message : message,
+        tip : tip,
+        id : id,
+        code : code,
+    };
+}
+
 function setLoginUser(id="", name="", haslogined=false) {
     loginUser.id = id;
     loginUser.name = name;
@@ -85,7 +98,9 @@ function getTwitterUsersBySearchKeyWord() {
 }
 
 async function getTweetByUserName(userName) {
-    return await fetch(`${twitterApiUri}/tweet_best/${userName}`).then(response => response.json());
+    return await fetch(`${twitterApiUri}/tweet_best/${userName}`)
+        .then(response => response.json())
+        .catch(error => toErrorObj(error));
 }
 
 async function getTweetByUsersTimeline(userNames = []) {
