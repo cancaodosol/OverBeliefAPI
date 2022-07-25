@@ -61,6 +61,48 @@ namespace OverBeliefApi.Controllers
             return twitterTweetEntity;
         }
 
+        // GET: api/twitter/tweets/tags/{tagname},{tagname},{tagname}
+        [HttpGet("tags/{strTagnames}")]
+        public async Task<ActionResult<IEnumerable<TwitterTweetEntity>>> GetTwitterTweetEntityByTag(string strTagnames)
+        {
+            var p = new LoginParameters();
+            await p.InitValidate(HttpContext, _context).ConfigureAwait(false);
+            if (!p.HasLogined) return NotFound();
+
+            if (_context.TwitterTweetEntities == null)
+            {
+                return NotFound();
+            }
+
+            var tagnames = strTagnames.Split(',').Select(x => x.Trim()).ToList();
+
+            Func< TwitterTweetEntity, bool> Contains = (tweet) => 
+            {
+                var contains = false;
+                if (tweet.Tag == null) return false;
+                var dbtags = tweet.Tag.Split(',').Select(x => x.Trim()).ToList();
+                dbtags.ForEach(x => 
+                {
+                    if (tagnames.Contains(x))
+                    {
+                        contains = true;
+                    }
+                });
+                return contains;
+            };
+            var twitterTweetEntity = _context.TwitterTweetEntities
+                .Where(x => x.OwnedUserId == p.UserID && !string.IsNullOrWhiteSpace(x.Tag)).ToList();
+
+            var tweets = twitterTweetEntity.Where(x => Contains(x)).ToList();
+
+            if (tweets == null)
+            {
+                return NotFound();
+            }
+
+            return tweets;
+        }
+
         // PUT: api/TwitterTweets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

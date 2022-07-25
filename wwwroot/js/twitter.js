@@ -1,5 +1,5 @@
-﻿// const twitterApiUri = 'https://localhost:7233/api/twitter';
-const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
+﻿const twitterApiUri = 'https://localhost:7233/api/twitter';
+// const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
 const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
@@ -119,6 +119,16 @@ async function editMyFavoriteTwitterTweet(tweetEntity) {
 
     if(ret.isError) return ret;
     return { isError : (!ret.id), message: ret.id ? "保存成功" : "保存失敗"};
+}
+
+async function getMyFavoriteTwitterTweetByTags(tagname="") {
+    return await fetch(`${twitterApiUri}/tweets/tags/${tagname}`)
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
 }
 
 function getTwitterUsersBySearchKeyWord() {
@@ -443,6 +453,13 @@ function _displayTweets(tweets, mode="") {
             tagNameEle.className = "tweet-tag-name";
             tagNameEle.href = "#" + tagName;
             tagNameEle.innerHTML = "#" + tagName;
+            tagNameEle.onclick = async () => {
+                showNowloading();
+                const tagtweets = await getMyFavoriteTwitterTweetByTags(tagName);
+                let message = !tagtweets.isError ? "取得完了" : "取得失敗";
+                if(!tagtweets.isError) _displayTweets(tagtweets, mode);
+                hideNowloading(!tagtweets.isError, message);
+            }
             tweetTags.appendChild(tagNameEle);
         });
         row.appendChild(tweetTags);
