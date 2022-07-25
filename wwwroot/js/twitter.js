@@ -1,5 +1,5 @@
-﻿const twitterApiUri = 'https://localhost:7233/api/twitter';
-// const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
+﻿// const twitterApiUri = 'https://localhost:7233/api/twitter';
+const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
 const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
@@ -192,8 +192,6 @@ function downloadTweetsCSV(tweets) {
         csvBody += "\n";
     });
 
-    console.log(csvHeader);
-    console.log(csvBody);
     const csvdata = csvHeader + "\n"
         + csvBody;
 
