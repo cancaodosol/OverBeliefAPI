@@ -1,5 +1,5 @@
-const authApiUri = 'https://localhost:7233/api/auth';
-// const authApiUri = 'https://h1deblog.com/overbeliefapi/api/auth';
+// const authApiUri = 'https://localhost:7233/api/auth';
+const authApiUri = 'https://h1deblog.com/overbeliefapi/api/auth';
 
 
 function toErrorObj(error=new Error(), id="", code="999") {
