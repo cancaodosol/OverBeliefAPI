@@ -1,5 +1,5 @@
-﻿// const twitterApiUri = 'https://localhost:7233/api/twitter';
-const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
+﻿const twitterApiUri = 'https://localhost:7233/api/twitter';
+// const twitterApiUri = 'https://h1deblog.com/overbeliefapi/api/twitter';
 const twitterOfficialUri = 'https://twitter.com';
 let twitterUsers = [];
 let twitterTweets = [];
@@ -167,6 +167,55 @@ function loginAuthorizeTwitter() {
     .catch(error => toErrorObj(error));
 }
 
+function downloadTweetsCSV(tweets) {
+    const tweetsHeader = [
+        // ["id" , "ツイートID"],
+        ["favoriteCount" , "いいね数"],
+        ["retweetCount" , "リツイート数"],
+        ["text" , "テキスト"],
+        ["fullText" , "フルテキスト"],
+        ["source" , "ソース"],
+        ["createdAt" , "投稿日"],
+    ];
+
+    let csvHeader = "";
+    tweetsHeader.forEach(h => {
+        csvHeader += ( h[1] + "," );
+    });
+
+    let csvBody = "";
+    tweets.forEach(tweet => {
+        tweetsHeader.forEach(h => {
+            const value = tweet[h[0]] ? tweet[h[0]].toString().replaceAll("\n", "\\n") : "";
+            csvBody += ( value + "," );
+        });
+        csvBody += "\n";
+    });
+
+    console.log(csvHeader);
+    console.log(csvBody);
+    const csvdata = csvHeader + "\n"
+        + csvBody;
+
+    const filename = `${tweets[0].user.name}@${tweets[0].user.screenName}_ツイート一覧_by_OverBeliefTool.csv`;
+    
+    // 文字化け対策: https://ameblo.jp/hero-design/entry-12652005689.html
+    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    
+    const csvbinarydata = new Blob([bom, csvdata], {type: "text/csv"});
+    const url = URL.createObjectURL(csvbinarydata);
+
+    const onceLink = document.createElement("a");
+    onceLink.download = filename;
+    onceLink.href = url;
+
+    document.body.appendChild(onceLink);
+    onceLink.click();
+
+    document.body.removeChild(onceLink);
+    delete onceLink;
+}
+
 const _iconbase = document.createElement("i");
 _iconbase.className = "bi-alarm";
 _iconbase.style.fontSize = "2rem";
@@ -318,6 +367,7 @@ function _displayTweets(tweets, mode="") {
 
     let tweetMenu = document.createElement('div');
     tweetMenu.id = "twitter-menu";
+
     let btnSortCreateAt = document.createElement('button');
     btnSortCreateAt.textContent = "投稿順で表示"
     btnSortCreateAt.className = "btn btn-sm btn-outline-secondary";
@@ -326,6 +376,15 @@ function _displayTweets(tweets, mode="") {
         _displayTweets(sortedTweets, mode);
     };
     tweetMenu.appendChild(btnSortCreateAt);
+
+    let btnDownloadCSV = document.createElement('button');
+    btnDownloadCSV.textContent = "このツイート情報をCSVで出力する"
+    btnDownloadCSV.className = "btn btn-sm btn-outline-secondary";
+    btnDownloadCSV.onclick = () => {
+        const ret = downloadTweetsCSV(twitterTweets);
+    };
+    tweetMenu.appendChild(btnDownloadCSV);
+
     resultBox.appendChild(tweetMenu);
     
     switch(mode){
@@ -334,14 +393,21 @@ function _displayTweets(tweets, mode="") {
         case _mode.MFT:
             userProfile.style.display = "none";
             $("#btns-get-recently-tweets").hide();
+            btnDownloadCSV.style.display = "none";
             break;
         case _mode.MTL:
             userProfile.style.display = "none";
             tweetResultDaysEle.style.display = "none";
             $("#btns-get-recently-tweets").hide();
             btnSortCreateAt.style.display = "none";
+            btnDownloadCSV.style.display = "none";
             break;
         default:
+            userProfile.style.display = "none";
+            tweetResultDaysEle.style.display = "none";
+            $("#btns-get-recently-tweets").hide();
+            btnSortCreateAt.style.display = "none";
+            btnDownloadCSV.style.display = "none";
             break;
     }
 
