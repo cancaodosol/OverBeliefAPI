@@ -135,7 +135,11 @@ namespace OverBeliefApi.Models.Twitter
         /// <returns>結果ツイート</returns>
         public List<Status> GetTweetsOfTargetUser(string userScreenName, int count)
         {
-            return this.Tokens.Statuses.UserTimeline(count: count, screen_name: userScreenName).ToList();
+            return this.Tokens.Statuses.UserTimeline(
+                count: count, 
+                screen_name: userScreenName, 
+                tweet_mode : TweetMode.Extended
+                ).ToList();
         }
 
         /// <summary>
@@ -167,7 +171,11 @@ namespace OverBeliefApi.Models.Twitter
                 if (!IsScreenName(name)) continue;
                 try 
                 {
-                    var tweets = this.Tokens.Statuses.UserTimeline(count: count, screen_name: name);
+                    var tweets = this.Tokens.Statuses.UserTimeline(
+                        count: count, 
+                        screen_name: name, 
+                        tweet_mode: TweetMode.Extended
+                        );
                     foreach (var tweet in tweets)
                     {
                         result.Add(tweet);
