@@ -36,7 +36,8 @@ namespace OverBeliefApi.Controllers
             {
                 return NotFound();
             }
-            return await _context.TwitterTweetEntities.Where(x => x.OwnedUserId == p.UserID).ToListAsync();
+            return await _context.TwitterTweetEntities.Where(x => x.OwnedUserId == p.UserID)
+                .OrderByDescending(x => x.CreateOn).ToListAsync();
         }
 
         // GET: api/TwitterTweets/5
