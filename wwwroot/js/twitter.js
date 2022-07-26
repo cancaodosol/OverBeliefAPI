@@ -399,6 +399,17 @@ function _createTwitterUserElement(user)
             }
         };
         btnbar.appendChild(btnToggleEditMode);
+
+        let btnGetBestTweet = document.createElement('button');
+        btnGetBestTweet.textContent = "BestTweet検索"
+        btnGetBestTweet.className = " btn btn-sm btn-outline-secondary";
+        btnGetBestTweet.onclick = async () => {
+            showNowloading();
+            const tweets = await getTweetByUserName(user.screenName);
+            _displayTweets(tweets, _mode.BTR);
+            hideNowloading(true);
+        };
+        btnbar.appendChild(btnGetBestTweet);
     }
     row.appendChild(btnbar);
 
