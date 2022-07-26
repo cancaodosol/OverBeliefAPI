@@ -14,7 +14,7 @@
         public TwitterTweetApiDto(CoreTweet.Status status) 
         {
             this.Id = status.Id;
-            this.Text = status.Text;
+            this.Text = status.FullText;
             this.FullText = status.FullText;
             this.RetweetCount = status.RetweetCount;
             this.FavoriteCount = status.FavoriteCount;
