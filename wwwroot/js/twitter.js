@@ -121,6 +121,26 @@ async function editMyFavoriteTwitterTweet(tweetEntity) {
     return { isError : (!ret.id), message: ret.id ? "保存成功" : "保存失敗"};
 }
 
+async function editMyFavoriteTwitterUser(userEntity) {
+    const ret = await fetch(`${twitterApiUri}/users/${userEntity.id}`, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userEntity)
+    })
+    .then(response => { 
+        if (!response.ok) {
+            throw new Error(response.status + " : " + response.statusText);
+        }
+        return response.json();})
+    .catch(error => toErrorObj(error));
+
+    if(ret.isError) return ret;
+    return { isError : (!ret.id), message: ret.id ? "保存成功" : "保存失敗"};
+}
+
 async function getMyFavoriteTwitterTweetByTags(tagname="") {
     return await fetch(`${twitterApiUri}/tweets/tags/${tagname}`)
     .then(response => { 
@@ -295,6 +315,27 @@ function _createTwitterUserElement(user)
         + `<span class="profile-count-text">${user.followersCount.toLocaleString()}</span> フォロワー`;
     row.appendChild(followerInfo);
     
+
+    let userTags = document.createElement('div');
+    userTags.id = `user-tag-${user.id}`;
+    userTags.className = "user-tag-box";
+    let tagNames = user.tag ? user.tag.split(',') : [];
+    tagNames.forEach(tagName => {
+        let tagNameEle = document.createElement('a');
+        tagNameEle.className = "user-tag-name";
+        tagNameEle.href = "#" + tagName;
+        tagNameEle.innerHTML = "#" + tagName;
+        tagNameEle.onclick = async () => {
+            showNowloading();
+            const tagusers = await getMyFavoriteTwitterUserByTags(tagName);
+            let message = !tagusers.isError ? "取得完了" : "取得失敗";
+            if(!tagusers.isError) _displayusers(tagusers, mode);
+            hideNowloading(!tagusers.isError, message);
+        }
+        userTags.appendChild(tagNameEle);
+    });
+    row.appendChild(userTags);
+
     let btnbar = document.createElement('div');
     {
         let btnAddFavorite = document.createElement('button');
@@ -318,6 +359,47 @@ function _createTwitterUserElement(user)
             addMyFavoriteTwitterUsers(userEntity);
         };
         btnbar.appendChild(btnAddFavorite);
+
+        let btnToggleEditMode = document.createElement('button');
+        btnToggleEditMode.textContent = "編集"
+        btnToggleEditMode.className = " btn btn-sm btn-outline-secondary";
+        btnToggleEditMode.onclick = async () => {
+            const thisTagsEle = document.getElementById(`user-tag-${user.id}`);
+
+            let isEditMode = false;
+            if(thisTagsEle.innerHTML.substring(0, 9) === "<textarea") isEditMode = true;
+
+            if(!isEditMode){
+                thisTagsEle.innerHTML = '<textarea rows="1">' + (user.tag ? user.tag : '') + '</textarea>';
+                thisTagsEle.classList.add("input-mode");
+                btnToggleEditMode.textContent = "保存";
+            }else{
+                let isChangedValue = false;
+                if(user.tag !== thisTagsEle.firstElementChild.value)isChangedValue = true;
+
+                if(isChangedValue === true){
+                    showNowloading();
+                    user.tag = thisTagsEle.firstElementChild.value;
+                    let ret = await editMyFavoriteTwitterUser(user);
+                    let message = !ret.isError ? "保存完了" : "保存失敗";
+                    hideNowloading(!ret.isError, message);
+                }
+
+                thisTagsEle.classList.remove("input-mode");
+
+                thisTagsEle.innerHTML = "";
+                let tagNames = user.tag ? user.tag.split(',') : [];
+                tagNames.forEach(tagName => {
+                    let tagNameEle = document.createElement('a');
+                    tagNameEle.className = "user-tag-name";
+                    tagNameEle.href = "#" + tagName;
+                    tagNameEle.innerHTML = "#" + tagName;
+                    thisTagsEle.appendChild(tagNameEle);
+                });
+                btnToggleEditMode.textContent = "編集";
+            }
+        };
+        btnbar.appendChild(btnToggleEditMode);
     }
     row.appendChild(btnbar);
 

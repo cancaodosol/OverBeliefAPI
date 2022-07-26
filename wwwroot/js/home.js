@@ -173,6 +173,17 @@ async function ini() {
         hideNowloading(true);
     });
 
+    $("#btn-show-favorite-twitter-user").on('click', async () => {
+        showNowloading();
+        let users = await getMyFavoriteTwitterUsers();
+        if(users.isError){
+            console.error(users);
+            users = [];
+        }
+        _displayTwitterUsers(users);
+        hideNowloading(true);
+    });
+
     $("#btn-show-favorite-timeline").on('click', async () => {
         showNowloading();
         let usernames = myFavoriteTwitterUserIds.map(x => x.id);

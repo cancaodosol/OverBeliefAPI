@@ -170,4 +170,25 @@ td {
     margin-bottom: 5px;
 }
 
+.twitter-profile-card textarea{
+    width: 100%;
+    max-width: 550px;
+}
+
+.twitter-profile-card .user-tag-box {
+    text-align: right;
+    padding-left: 5px;
+}
+
+.twitter-profile-card .user-tag-box.input-mode{
+    text-align: left;
+}
+
+.twitter-profile-card .uer-tag-name {
+    font-size: 0.8rem;
+    margin-left: 5px;
+    margin-right: 5px;
+    color: darkgray;
+}
+
 /* ========== twitter-profile-card end ====== */
