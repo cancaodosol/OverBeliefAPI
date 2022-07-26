@@ -314,7 +314,6 @@ function _createTwitterUserElement(user)
     followerInfo.innerHTML = `<span class="profile-count-text">${user.friendsCount.toLocaleString()}</span> フォロー中`
         + `<span class="profile-count-text">${user.followersCount.toLocaleString()}</span> フォロワー`;
     row.appendChild(followerInfo);
-    
 
     let userTags = document.createElement('div');
     userTags.id = `user-tag-${user.id}`;
@@ -523,7 +522,7 @@ function _displayTweets(tweets, mode="") {
         let tweetText = document.createElement('div');
         tweetText.id = `tweet-text-${tweet.id}`;
         tweetText.className = "tweet-text";
-        tweetText.innerHTML = tweet.fullText;
+        tweetText.innerHTML = tweet.text;
         row.appendChild(tweetText);
 
         let tweetTags = document.createElement('div');
@@ -606,19 +605,19 @@ function _displayTweets(tweets, mode="") {
                     btnToggleEditMode.textContent = "保存";
                 }else{
                     let isChangedValue = false;
-                    if(tweet.fullText !== thisTextEle.firstElementChild.value)isChangedValue = true;
+                    if(tweet.text !== thisTextEle.firstElementChild.value)isChangedValue = true;
                     if(tweet.tag !== thisTagsEle.firstElementChild.value)isChangedValue = true;
 
                     if(isChangedValue === true){
                         showNowloading();
-                        tweet.fullText = thisTextEle.firstElementChild.value;
+                        tweet.text = thisTextEle.firstElementChild.value;
                         tweet.tag = thisTagsEle.firstElementChild.value;
                         let ret = await editMyFavoriteTwitterTweet(tweet);
                         let message = !ret.isError ? "保存完了" : "保存失敗";
                         hideNowloading(!ret.isError, message);
                     }
 
-                    thisTextEle.innerHTML = tweet.fullText;
+                    thisTextEle.innerHTML = tweet.text;
                     thisTagsEle.classList.remove("input-mode");
 
                     thisTagsEle.innerHTML = "";
