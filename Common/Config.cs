@@ -41,8 +41,8 @@ namespace OverBeliefApi.Common
             public string ConsumerSecret { get; }
             public _token(IniData data)
             {
-                ConsumerKey = data["token"]["ConsumerKey"];
-                ConsumerSecret = data["token"]["ConsumerSecret"];
+                ConsumerKey = data["token"][nameof(ConsumerKey)];
+                ConsumerSecret = data["token"][nameof(ConsumerSecret)];
             }
         }
         public _token token;
