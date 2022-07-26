@@ -32,7 +32,7 @@ namespace OverBeliefApi.Controllers
         //http://nakaji.hatenablog.com/entry/2014/09/19/024341
         [EnableCors("All")]
         [HttpPost("login")]
-        public ActionResult Login() 
+        public ActionResult Login()
         {
 
             //"{TwitterApiKey}", "{TwitterApiKeySecret}", "https://h1deblog.com/overbeliefapi/twitter/callback"
@@ -50,7 +50,7 @@ namespace OverBeliefApi.Controllers
             // レスポンスヘッダーのLocationへ、URLを指定することで、戻った先からリダイレクトしてもらう．
             //HttpContext.Response.Headers.Add("Location", OAuthSession.AuthorizeUri.OriginalString);
             //return StatusCode(StatusCodes.Status303SeeOther);
-            return Ok(new { url=OAuthSession.AuthorizeUri.OriginalString });
+            return Ok(new { url = OAuthSession.AuthorizeUri.OriginalString });
         }
 
         public class TwitterCallbackParameters : LoginParameters
@@ -73,7 +73,7 @@ namespace OverBeliefApi.Controllers
         /// <returns></returns>
         [EnableCors("All")]
         [HttpGet("callback")]
-        public async Task<IActionResult> TwitterCallBack([FromQuery]string? oauth_verifier = null, [FromQuery] string? oauth_token = null, [FromQuery] string? denied = null) 
+        public async Task<IActionResult> TwitterCallBack([FromQuery] string? oauth_verifier = null, [FromQuery] string? oauth_token = null, [FromQuery] string? denied = null)
         {
             var p = new TwitterCallbackParameters();
             await p.InitValidate(HttpContext, _context).ConfigureAwait(false);
@@ -82,13 +82,13 @@ namespace OverBeliefApi.Controllers
             p.oauth_token = oauth_token;
 
             // 直リンクやTwitterの認証拒否はトップページへ飛ばす
-            if (p.oauth_token == null || p.oauth_verifier == null) 
+            if (p.oauth_token == null || p.oauth_verifier == null)
             {
                 HttpContext.Response.Headers.Add("Location", "/");
                 return StatusCode(StatusCodes.Status303SeeOther);
             }
 
-            OAuth.OAuthSession OAuthSession;            
+            OAuth.OAuthSession OAuthSession;
             var SessionUtf8 = HttpContext.Session.Get("OAuthSession");
             if (SessionUtf8 == null)
             {
@@ -97,7 +97,7 @@ namespace OverBeliefApi.Controllers
             }
             OAuthSession = JsonSerializer.Deserialize<OAuth.OAuthSession>(SessionUtf8);
 
-            if (OAuthSession != null) 
+            if (OAuthSession != null)
             {
                 var token = OAuthSession.GetTokens(p.oauth_verifier);
             }
